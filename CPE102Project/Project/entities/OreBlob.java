@@ -5,8 +5,8 @@ import Project.Point;
 public class OreBlob
 extends AnimationRate{
     private int rate;
-    public OreBlob(String name, Point position, int rate, int animation_rate){
-        super(name, position, animation_rate);
+    public OreBlob(String name, Point position, int rate, int animationRate){
+        super(name, position, animationRate);
         this.rate = rate;
     }
     public int getRate(){

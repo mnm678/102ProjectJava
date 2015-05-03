@@ -7,11 +7,11 @@ class Miner
     private int resourceLimit;
     private int animationRate;
     private int resourceCount;
-    public Miner(String name, int resource_limit, Point position, int rate, int animation_rate){
+    public Miner(String name, int resourceLimit, Point position, int rate, int animationRate){
         super(name, position, rate);
-        this.resourceLimit = resource_limit;
+        this.resourceLimit = resourceLimit;
         //this.resourceCount = 0;
-        this.animationRate = animation_rate;
+        this.animationRate = animationRate;
     }
     /*public void setResourceCount(int n){
         this.resourceCount = n;

@@ -5,12 +5,12 @@ import Project.entities.PendingActions;
 
 public class AnimationRate
     extends PendingActions {
-    private int animation_rate;
-    public AnimationRate(String name, Point position, int animation_rate){
+    private int animationRate;
+    public AnimationRate(String name, Point position, int animationRate){
         super(name, position);
-        this.animation_rate = animation_rate;
+        this.animationRate = animationRate;
     }
     public int getAnimationRate(){
-        return this.animation_rate;
+        return this.animationRate;
     }
 }

@@ -5,13 +5,13 @@ import Project.Types;
 
 public class Vein
 extends Animated{
-    private int resource_distance;
+    private int resourceDistance;
     public Vein(String name, int rate, Point position){
         super(name, position, rate);
-        this.resource_distance = 1;
+        this.resourceDistance = 1;
     }
     public int getResourceDistance(){
-        return this.resource_distance;
+        return this.resourceDistance;
     }
 
     public Types getType(){

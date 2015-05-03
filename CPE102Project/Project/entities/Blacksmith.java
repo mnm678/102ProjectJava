@@ -7,24 +7,24 @@ import Project.entities.Entity;
 public class Blacksmith
 extends Entity {
     private int rate;
-    private int resource_limit;
-    private int resource_distance;
-    private int resource_count;
-    public Blacksmith(String name, Point position, int resource_limit, int rate){
+    private int resourceLimit;
+    private int resourceDistance;
+    private int resourceCount;
+    public Blacksmith(String name, Point position, int resourceLimit, int rate){
         super(name, position);
-        this.resource_limit =resource_limit;
-        this.resource_count = 0;
+        this.resourceLimit =resourceLimit;
+        this.resourceCount = 0;
         this.rate = rate;
-        this.resource_distance = 1;
+        this.resourceDistance = 1;
     }
     public int getRate(){
         return this.rate;
     }
     public int getResourceCount(){
-        return this.resource_count;
+        return this.resourceCount;
     }
     public void setResourceCount(int n){
-        this.resource_count = n;
+        this.resourceCount = n;
     }
 
     public Types getType(){

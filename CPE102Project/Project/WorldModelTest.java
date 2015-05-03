@@ -35,7 +35,8 @@ public class WorldModelTest {
         assertFalse(testWorld.isOccupied(new Point(1, 1)));
         assertFalse(testFullWorld.isOccupied(new Point(10, 4)));
 
-        //assertTrue
+        testWorld.addEntity(testVein);
+        assertTrue(testWorld.isOccupied(new Point(2,3)));
     }
 
     @Test
@@ -91,6 +92,7 @@ public class WorldModelTest {
         assertSame(testSmith, testWorld.getTileOccupant(new Point(2, 2)));
 
         assertSame(null, testWorld.getTileOccupant(new Point(100,2)));
+        assertSame(null, testWorld.getTileOccupant(new Point(1,1)));
     }
 
     @Test
