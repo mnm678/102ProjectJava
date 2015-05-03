@@ -99,7 +99,20 @@ public class WorldModel{
         return this.entities;
     }
 
-    //nextPosition
+    public Point nextPosition(Point entityPt, Point destPt){
+        int horiz = Integer.signum(destPt.getX() - entityPt.getX());
+        Point newPt = new Point(entityPt.getX() + horiz, entityPt.getY());
+
+        if(horiz == 0 || this.isOccupied(newPt)){
+            int vert = Integer.signum(destPt.getY() - entityPt.getY());
+            newPt = new Point(entityPt.getX(), entityPt.getY() + vert);
+
+            if(vert ==0 || this.isOccupied(newPt)){
+                newPt = new Point(entityPt.getX(), entityPt.getY());
+            }
+        }
+        return newPt;
+    }
 
     public Point findOpenAround(Point pt, int distance){
         for(int dy = distance - 1; dy < distance + 2; dy++){
