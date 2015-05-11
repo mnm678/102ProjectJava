@@ -5,18 +5,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WorldModel{
+
+    private static WorldModel instance = null;
+    protected WorldModel(){}
+
     private Grid background;
     private int numRows;
     private int numCols;
     private Grid occupancy;
-    private List<Entities> entities;
+    private List<Entity> entities;
 
-    public WorldModel(int numRows, int numCols, Entities bg){
+    public static WorldModel getInstance(){
+        if(instance == null){
+            instance =  new WorldModel();
+        }
+        return instance;
+    }
+
+    public void init(int numRows, int numCols, Entities bg){
         this.background = new Grid(numCols, numRows, bg);
         this.numRows = numRows;
         this.numCols = numCols;
         this.occupancy = new Grid(numCols, numRows, null);
-        this.entities = new ArrayList<Entities>();
+        this.entities = new ArrayList<Entity>();
+    }
+
+    public int getNumRows(){
+        return this.numRows;
+    }
+
+    public int getNumCols(){
+        return this.numCols;
     }
 
     public boolean withinBounds(Point pt){
@@ -95,7 +114,7 @@ public class WorldModel{
         }
     }
 
-    public List getEntities(){
+    public List<Entity> getEntities(){
         return this.entities;
     }
 

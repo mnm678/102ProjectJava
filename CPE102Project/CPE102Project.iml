@@ -25,5 +25,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="core" level="application" />
+    <orderEntry type="library" name="processing-core" level="project" />
+    <orderEntry type="library" name="processing-core (2)" level="project" />
+    <orderEntry type="library" name="processing-core (3)" level="project" />
+    <orderEntry type="library" name="processing-core (4)" level="project" />
+    <orderEntry type="library" name="processing-core (5)" level="project" />
+    <orderEntry type="library" name="processing-core (6)" level="project" />
+    <orderEntry type="library" name="processing-core (7)" level="project" />
+    <orderEntry type="library" name="processing-core (8)" level="project" />
+    <orderEntry type="library" name="processing-core (9)" level="project" />
   </component>
 </module>

@@ -36,7 +36,7 @@ public class WorldModelTest {
         assertFalse(testFullWorld.isOccupied(new Point(10, 4)));
 
         testWorld.addEntity(testVein);
-        assertTrue(testWorld.isOccupied(new Point(2,3)));
+        assertTrue(testWorld.isOccupied(new Point(2, 3)));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class WorldModelTest {
         assertSame(null, testWorld.findNearest(new Point(3, 3), Types.ENTITIES));
 
         testWorld.addEntity(testSmith);
-        assertSame(testSmith, testWorld.findNearest(new Point(2,2), Types.BLACKSMITH));
+        assertSame(testSmith, testWorld.findNearest(new Point(2, 2), Types.BLACKSMITH));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class WorldModelTest {
 
         testWorld.addEntity(testOre);
         testWorld.moveEntity(testOre, new Point(100, 100));
-        assertSame(testOre, testWorld.getTileOccupant(new Point(1,2)));
+        assertSame(testOre, testWorld.getTileOccupant(new Point(1, 2)));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class WorldModelTest {
         testWorld.addEntity(testSmith);
         assertSame(testSmith, testWorld.getTileOccupant(new Point(2, 2)));
 
-        assertSame(null, testWorld.getTileOccupant(new Point(100,2)));
+        assertSame(null, testWorld.getTileOccupant(new Point(100, 2)));
         assertSame(null, testWorld.getTileOccupant(new Point(1,1)));
     }
 
@@ -99,6 +99,16 @@ public class WorldModelTest {
     public void testGetEntities() throws Exception {
         testWorld.addEntity(testSmith);
         assertSame(testSmith, testWorld.getEntities().get(0));
+    }
+
+    @Test
+    public void testNextPosition() throws Exception {
+        testWorld.addEntity(testOre);
+        assertSame(2, testWorld.nextPosition(testOre.getPosition(), new Point(3, 4)).getX());
+        assertSame(2, testWorld.nextPosition(testOre.getPosition(), new Point(3, 4)).getX());
+
+        assertSame(4, testWorld.nextPosition(new Point(3,3), new Point(3,7)).getY());
+        assertSame(3, testWorld.nextPosition(new Point(3,3), new Point(3,7)).getX());
     }
 
     @Test
