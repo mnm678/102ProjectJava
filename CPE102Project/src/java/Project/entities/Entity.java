@@ -24,4 +24,8 @@ public abstract class Entity {
     public PImage getImage(){
         return imgs.get(currentImg);
     }
+
+    public void nextImage(){
+        currentImg = (currentImg +1) % imgs.size();
+    }
 }

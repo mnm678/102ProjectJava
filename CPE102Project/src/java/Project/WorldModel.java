@@ -1,8 +1,9 @@
 package src.java.Project;
 import processing.core.PImage;
-import src.java.Project.entities.Entity;
-import src.java.Project.entities.InteractiveEntity;
+import src.java.Project.entities.*;
 
+import javax.swing.*;
+import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,23 @@ public class WorldModel{
     private int numCols;
     private Grid occupancy;
     private List<InteractiveEntity> entities;
+    public OrderedList actionQueue;
+
+    public final int blobRateScale = 4;
+    private final int blobAnimationRateScale = 50;
+    private final int blobAnimationMin = 1;
+    private final int blobAnimationMax = 3;
+
+    private final int oreCorruptMin = 20000;
+    private final int oreCorruptMax = 30000;
+
+    public final int quakeSteps = 10;
+    public final int quakeDuration = 1100;
+    private final int quakeAnimationRate = 100;
+
+    private final int veinSpawnDelay = 500;
+    private final int veinRateMin = 8000;
+    private final int veinRateMax = 17000;
 
     public static WorldModel getInstance(){
         if(instance == null){
@@ -30,6 +48,7 @@ public class WorldModel{
         this.numCols = numCols;
         this.occupancy = new Grid(numCols, numRows, null);
         this.entities = new ArrayList<InteractiveEntity>();
+        this.actionQueue = new OrderedList();
     }
 
     public int getNumRows(){
@@ -72,8 +91,8 @@ public class WorldModel{
         Point pt = entity.getPosition();
         if(this.withinBounds(pt)){
             Entity oldEntity = this.occupancy.getCell(pt);
-            if(oldEntity != null){
-                //entity.clearPendingActions(oldEntity)
+            if(oldEntity instanceof PendingActions){
+                //oldEntity.clearPendingActions();
             }
             this.occupancy.setCell(pt,entity);
             this.entities.add(entity);
@@ -107,11 +126,22 @@ public class WorldModel{
         }
     }
 
-    //public void scheduleAction(action)
+    public void scheduleAction(Actions action, long time){
+        this.actionQueue.insert(action, time);
+    }
 
-    //public void unscheduleAction(action)
+    public void unscheduleAction(Actions action){
+        this.actionQueue.remove(action);
+    }
 
-    //updateOnTime
+    public void updateOnTime(long ticks){
+        ListItem next = this.actionQueue.head();
+        while(!(next.equals(null)) && next.getOrd() < ticks){
+            this.actionQueue.pop();
+            next.getItem().doAction(ticks);
+            next = this.actionQueue.head();
+        }
+    }
 
     public PImage getBackgroundImage(Point pt){
         if(this.withinBounds(pt)){
@@ -165,8 +195,6 @@ public class WorldModel{
         return newPt;
     }
 
-    //createBlob
-
     public Point findOpenAround(Point pt, int distance){
         for(int dy = distance - 1; dy < distance + 2; dy++){
             for(int dx = distance - 1; dx < distance + 2; dx++){
@@ -180,17 +208,89 @@ public class WorldModel{
         return null;
     }
 
-    //createOre
+    public OreBlob createBlob(String name, Point pt, int rate, long ticks){
+        OreBlob blob = new OreBlob(name, Load.map.get("blob"),
+                pt, rate, (blobAnimationMin + (int)Math.random()*blobAnimationMax) * blobAnimationRateScale);
+        blob.scheduleBlob(this,ticks);
+        return blob;
+    }
 
-    //createQuake
+    public Ore createOre(String name, Point pt, long ticks){
+        Ore ore = new Ore(name, Load.map.get("ore"), pt,
+                oreCorruptMin + (int)Math.random() * oreCorruptMax
+        );
+        ore.scheduleOre(this,ticks);
+        return ore;
+    }
 
-    //createVein
+    public Quake createQuake(Point pt, long ticks){
+        Quake quake = new Quake("quake", Load.map.get("quake"), pt,
+                quakeAnimationRate
+        );
+        quake.scheduleQuake(this,ticks);
+        return quake;
+    }
 
-    //createAnimationAction
+    public Vein createVein(String name, Point pt, long ticks){
+        Vein vein = new Vein("vein" + name, Load.map.get("ore"),
+                veinRateMin + (int)Math.random() * veinRateMax, pt
+        );
+        return vein;
+    }
 
-    //scheduleAnimation
+    public Actions createAnimationAction(Miner entity, int repeatCount){
+        Actions [] temp = {null};
+        temp[0] = (long currentTicks) ->{
+
+            entity.removePendingAction(temp[0]);
+
+            entity.nextImage();
+
+            if(repeatCount != 1){
+                actionScheduleAction(entity,createAnimationAction(entity, Math.max(repeatCount - 1, 0)),
+                        System.currentTimeMillis() + entity.getAnimationRate());
+            }
+        };
+        return temp[0];
+    }
+
+    public Actions createAnimationAction(AnimationRate entity, int repeatCount){
+        Actions [] temp = {null};
+        temp[0] = (long currentTicks) ->{
+
+            entity.removePendingAction(temp[0]);
+
+            entity.nextImage();
+
+            if(repeatCount != 1){
+                actionScheduleAction(entity,createAnimationAction(entity, Math.max(repeatCount - 1, 0)),
+                        System.currentTimeMillis() + entity.getAnimationRate());
+            }
+        };
+        return temp[0];
+    }
+
+    public void actionScheduleAction(PendingActions entity, Actions action, long time){
+        entity.addPendingAction(action);
+        scheduleAction(action, time);
+    }
+
+    public void scheduleAnimation(Miner entity){
+        actionScheduleAction(entity, createAnimationAction(entity, 0), entity.getAnimationRate());
+    }
+
+    public void scheduleAnimation(AnimationRate entity, int repeatCount){
+        actionScheduleAction(entity, createAnimationAction(entity, repeatCount), entity.getAnimationRate());
+    }
 
     //handleMouseButton
+
+    public void actionsClearPendingActions(PendingActions entity){
+        for(Actions action : entity.getPendingActions()){
+            unscheduleAction(action);
+        }
+        entity.clearPendingActions();
+    }
 
     public InteractiveEntity nearestEntity(List<InteractiveEntity> e, List<Double> dist){
         InteractiveEntity ePair = null;
@@ -205,5 +305,22 @@ public class WorldModel{
             }
         }
         return ePair;
+    }
+
+    public Boolean adjacent(Point p1, Point p2){
+        return ((p1.getX() == p2.getX() && Math.abs(p1.getY() - p2.getY()) == 1) ||
+                (p1.getY() == p2.getY() && Math.abs(p1.getX() - p2.getX()) == 1));
+    }
+
+    public int sign(int x){
+        if(x<0){
+            return -1;
+        }
+        else if(x>0){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 }

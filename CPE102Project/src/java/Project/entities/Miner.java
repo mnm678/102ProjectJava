@@ -1,11 +1,13 @@
 package src.java.Project.entities;
 
+import src.java.Project.Actions;
 import src.java.Project.Point;
 import processing.core.PImage;
+import src.java.Project.WorldModel;
 
 import java.util.List;
 
-public class Miner
+public abstract class Miner
     extends Animated{
     private int resourceLimit;
     private int animationRate;
@@ -28,4 +30,42 @@ public class Miner
     public int getAnimationRate(){
         return this.animationRate;
     }
+
+    public Miner tryTransformMiner(WorldModel world, Entity transform){
+        Miner newEntity = evaluate(world);
+        if(this != newEntity){
+            world.actionsClearPendingActions(this);
+            world.removeEntityAt(this.getPosition());
+            world.addEntity(newEntity);
+            world.scheduleAnimation(newEntity);
+        }
+        return newEntity;
+    }
+
+    public Actions createMinerAction(WorldModel world){
+        Actions [] action = null;
+        action[0] = (long currentTicks) ->{
+            removePendingAction(action[0]);
+
+            Point entityPt = this.getPosition();
+            Boolean found = startingAction(entityPt, world);
+
+            Miner newEntity = this;
+            if(found){
+                newEntity = tryTransformMiner(world, returnType(world));
+            }
+
+            world.actionScheduleAction(newEntity, newEntity.createMinerAction(world),
+                    currentTicks + newEntity.getRate());
+        };
+        return action[0];
+    }
+
+    public Miner evaluate(WorldModel world){
+        return returnType(world);
+    }
+
+    abstract Miner returnType(WorldModel world);
+
+    abstract Boolean startingAction(Point pt, WorldModel world);
 }

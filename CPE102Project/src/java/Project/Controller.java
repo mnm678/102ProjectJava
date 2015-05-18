@@ -3,6 +3,7 @@ package src.java.Project;
 import processing.core.*;
 import src.java.Project.entities.Background;
 import src.java.Project.entities.Entity;
+import src.java.Project.entities.InteractiveEntity;
 
 import java.awt.*;
 
@@ -15,12 +16,17 @@ public class Controller extends PApplet{
     private WorldModel world = WorldModel.getInstance();
     private Load load = Load.getInstance();
 
+    private long nextTime;
+
     private final int worldWidthScale = 2;
     private final int worldHeightScale = 2;
     private final int screenWidth = 640;
     private final int screenHeight = 480;
     private final int tileWidth = 32;
     private final int tileHeight = 32;
+    private final int animationTime = 100;
+
+    private static final int COLOR_MASK = 0xffffff;
 
     private PImage test;
 
@@ -45,7 +51,9 @@ public class Controller extends PApplet{
         Background defaultBackground = new Background(defaultImageName, load.getImages(defaultImageName));
         world.init(numRows, numCols, defaultBackground);
 
-        //PImage test = loadImage("grass.bmp");
+        nextTime = System.currentTimeMillis() + animationTime;
+
+
         load.loadImages(imageListFileName);
         //PImage grass = load.getImages("grass").get(0);
         //Load.testDraw();
@@ -55,10 +63,7 @@ public class Controller extends PApplet{
         Load.loadWorld(worldFile, true, world);
         view.init(screenWidth / tileWidth, screenHeight / tileHeight, tileWidth, tileHeight, this);
         view.drawViewport();
-        System.out.println(world.getBackgroundImage(new Point(20, 15)));
-        System.out.println(world.getBackgroundImage(new Point(35,15)));
-        System.out.println(world.getNumCols());
-        System.out.println(world.getNumRows());
+        test = setAlpha(loadImage("miner1.bmp"), color(255, 255, 255), 0);
     }
 
 
@@ -82,12 +87,40 @@ public class Controller extends PApplet{
         view.updateView(deltaX, deltaY);
     }
 
-    /*public void handleTimerEvent(){
-        List<Point> rects = world.updateOnTime();
-        view.updateViewTiles(rects);
-    }*/
+    public void handleTimerEvent(){
+        world.updateOnTime(System.currentTimeMillis());
+    }
 
     public void draw(){
+        System.out.println(world.actionQueue.list);
+
+        long time = System.currentTimeMillis();
+        if(time >= nextTime){
+            /*for(InteractiveEntity entity : world.getEntities()){
+                entity.updateImage();
+                System.out.println(entity.getType());
+            }*/
+            //view.drawViewport();
+            handleTimerEvent();
+            nextTime = System.currentTimeMillis() + 100;
+        }
         view.drawViewport();
+    }
+
+    public static PImage setAlpha(PImage img, int maskColor, int alpha)
+    {
+        int alphaValue = alpha << 24;
+        int nonAlpha = maskColor & COLOR_MASK;
+        img.format = PApplet.ARGB;
+        img.loadPixels();
+        for (int i = 0; i < img.pixels.length; i++)
+        {
+            if ((img.pixels[i] & COLOR_MASK) == nonAlpha)
+            {
+                img.pixels[i] = alphaValue | nonAlpha;
+            }
+        }
+        img.updatePixels();
+        return img;
     }
 }

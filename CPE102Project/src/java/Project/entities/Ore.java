@@ -1,9 +1,12 @@
 package src.java.Project.entities;
 
+import src.java.Project.Actions;
 import src.java.Project.Point;
 import src.java.Project.Types;
 import processing.core.PImage;
+import src.java.Project.WorldModel;
 
+import java.sql.Blob;
 import java.util.List;
 
 public class Ore
@@ -14,5 +17,24 @@ extends Animated{
 
     public Types getType(){
         return Types.ORE;
+    }
+
+    public Actions createOreTransformAction(WorldModel world){
+        Actions [] action = null;
+        action[0] = (long currentTicks) ->{
+            removePendingAction(action[0]);
+            OreBlob blob = world.createBlob(this.getName() + " -- blob",
+                    this.getPosition(),
+                    this.getRate()/world.blobRateScale,
+                    currentTicks);
+            removeEntity(world);
+            world.addEntity(blob);
+        };
+        return action[0];
+    }
+
+    public void scheduleOre(WorldModel world, long ticks){
+        world.actionScheduleAction(this, createOreTransformAction(world),
+                ticks + this.getRate());
     }
 };

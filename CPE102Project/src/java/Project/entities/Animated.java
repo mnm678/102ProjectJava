@@ -5,7 +5,7 @@ import processing.core.PImage;
 
 import java.util.List;
 
-class Animated
+public class Animated
     extends PendingActions {
     private int rate;
     public Animated(String name, List<PImage> imgs, Point position, int rate){

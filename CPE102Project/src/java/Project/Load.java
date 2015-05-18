@@ -98,7 +98,7 @@ public class Load {
                         addBackground(properties, world);
                     }
                     else{
-                        //addEntity(properties,run, world);
+                        addEntity(properties,run, world);
                     }
                 }
             }
@@ -127,8 +127,8 @@ public class Load {
     }
 
     public static InteractiveEntity createFromProperties(String[] properties){
-        String key = properties[propertyKey];
         if (properties != null){
+            String key = properties[propertyKey];
             switch (key){
                 case minerKey:
                     return createMiner(properties);
@@ -147,13 +147,17 @@ public class Load {
 
     public static Miner createMiner(String[] properties){
         if(properties.length == minerNumProperties){
-            Miner miner = new Miner(properties[minerName],
+            Miner miner = new MinerNotFull(properties[minerName],
                     getImages(properties[propertyKey]),
                     Integer.parseInt(properties[minerLimit]),
                     new Point(Integer.parseInt(properties[minerCol]), Integer.parseInt(properties[minerRow])),
                     Integer.parseInt(properties[minerRate]),
                     Integer.parseInt(properties[minerAnimationRate])
                     );
+            //System.out.println(properties[minerName]);
+            //System.out.println(Integer.parseInt(properties[minerLimit]));
+            //System.out.println(Integer.parseInt(properties[minerCol]));
+            //System.out.println(Integer.parseInt(properties[minerRow]));
             return miner;
         }
         else{
@@ -250,6 +254,9 @@ public class Load {
         if(attrs.length >=2){
             String key = attrs[0];
             PImage img = controller.loadImage(attrs[1]);
+            if(key.equals("miner")){
+                img = controller.setAlpha(controller.loadImage(attrs[1]), controller.color(255, 255, 255), 0);
+            }
 
             if(img != null){
                 List<PImage> imgs = getImagesInternal(key);

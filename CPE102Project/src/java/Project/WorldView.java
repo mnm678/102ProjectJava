@@ -58,6 +58,7 @@ public class WorldView {
 
     public void drawEntities(){
         for(InteractiveEntity entity : world.getEntities()){
+            //System.out.println("hit");
             if(this.viewport.contains(entity.getPosition())){
                 Point vPt = this.viewport.fromWorld(entity.getPosition());
                 drawTile(entity.getImage(), vPt);
@@ -67,7 +68,7 @@ public class WorldView {
 
     public void drawViewport(){
         this.drawBackground();
-        //this.drawEntities();
+        this.drawEntities();
     }
 
     public void updateView(int deltaX, int deltaY){
@@ -125,12 +126,7 @@ public class WorldView {
         //System.out.println(numCols);
         //System.out.println(viewport.getWidth());
 
-        //if(newX >= 0 && newX < this.numCols && newY >=0 && newY < this.numRows) {
-            return new Viewport(new Point(newX, newY), this.viewport.getWidth(), this.viewport.getHeight());
-        //}
-        //else{
-          //  return this.viewport;
-        //}
+        return new Viewport(new Point(newX, newY), this.viewport.getWidth(), this.viewport.getHeight());
     }
 
 }

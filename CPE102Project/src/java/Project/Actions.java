@@ -6,5 +6,5 @@ package src.java.Project;
 
 @FunctionalInterface
 public interface Actions<T> {
-    void doAction(T t);
+    void doAction(long t);
 }

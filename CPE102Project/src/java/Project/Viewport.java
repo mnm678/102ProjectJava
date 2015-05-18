@@ -37,8 +37,8 @@ public class Viewport {
     }
 
     public boolean contains(Point pt){
-        int x = topLeft.getX() - pt.getX();
-        int y = topLeft.getY() - pt.getY();
+        int x = pt.getX() - topLeft.getX();
+        int y = pt.getY() - topLeft.getY();
         return x >= 0 && y >= 0 && x < width && y < height;
     }
 }
