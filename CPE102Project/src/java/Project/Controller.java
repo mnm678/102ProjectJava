@@ -60,7 +60,7 @@ public class Controller extends PApplet{
         //image(grass, 32, 0);
         //view.drawTile(test, new Point(2, 2));
 
-        Load.loadWorld(worldFile, true, world);
+        Load.loadWorld(worldFile, true, world, System.currentTimeMillis());
         view.init(screenWidth / tileWidth, screenHeight / tileHeight, tileWidth, tileHeight, this);
         view.drawViewport();
         test = setAlpha(loadImage("miner1.bmp"), color(255, 255, 255), 0);
@@ -92,7 +92,7 @@ public class Controller extends PApplet{
     }
 
     public void draw(){
-        System.out.println(world.actionQueue.list);
+        //System.out.println(world.actionQueue.list);
 
         long time = System.currentTimeMillis();
         if(time >= nextTime){

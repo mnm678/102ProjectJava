@@ -24,17 +24,19 @@ public class MinerNotFull
 
     public Boolean minerToOre(WorldModel world, Ore ore){
         Point minerPt = this.getPosition();
-        if(ore.equals(null)){
+        if(ore == null){
+            //System.out.println("null ore");
             return false;
         }
         Point orePt = ore.getPosition();
         if(world.adjacent(minerPt,orePt)){
+            //System.out.println("adjacent ore");
             this.setResourceCount(1+this.getResourceCount());
             ore.removeEntity(world);
             return true;
         }
         else{
-            Point newPt = world.nextPosition(minerPt,orePt);
+            //Point newPt = world.nextPosition(minerPt,orePt);
             return false;
         }
     }
@@ -59,6 +61,7 @@ public class MinerNotFull
 
     public Boolean startingAction(Point entityPt, WorldModel world){
         Ore ore = (Ore) world.findNearest(entityPt, Types.ORE);
+        //System.out.println("in notFull starting action");
         return minerToOre(world, ore);
     }
 

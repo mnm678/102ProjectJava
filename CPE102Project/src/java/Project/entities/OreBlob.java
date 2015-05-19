@@ -40,7 +40,7 @@ extends AnimationRate{
     }
 
     public Actions createOreBlobAction(WorldModel world){
-        Actions [] action = null;
+        Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
 

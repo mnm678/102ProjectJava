@@ -5,6 +5,7 @@ import src.java.Project.Point;
 import processing.core.PImage;
 import src.java.Project.WorldModel;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 public abstract class Miner
@@ -43,12 +44,14 @@ public abstract class Miner
     }
 
     public Actions createMinerAction(WorldModel world){
-        Actions [] action = null;
+        Actions [] action = {null};
         action[0] = (long currentTicks) ->{
+            //System.out.println("in createMinerAction");
             removePendingAction(action[0]);
 
             Point entityPt = this.getPosition();
             Boolean found = startingAction(entityPt, world);
+            //System.out.println(found);
 
             Miner newEntity = this;
             if(found){

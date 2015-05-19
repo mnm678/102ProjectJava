@@ -35,7 +35,7 @@ public class OrderedList {
     }
 
     public ListItem head(){
-        if(list != null){
+        if(list.size() > 0){
             return list.get(0);
         }
         else{
@@ -44,7 +44,7 @@ public class OrderedList {
     }
 
     public ListItem pop(){
-        if(list != null){
+        if(list.size() >0){
             ListItem temp = list.get(0);
             list.remove(list.get(0));
             return temp;
@@ -52,5 +52,9 @@ public class OrderedList {
         else{
             return null;
         }
+    }
+
+    public int getSize(){
+        return list.size();
     }
 }

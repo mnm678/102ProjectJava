@@ -27,7 +27,7 @@ extends Animated{
     }
 
     public Actions createVeinAction(WorldModel world){
-        Actions [] action = null;
+        Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
             Point openPt = world.findOpenAround(this.getPosition(), this.getResourceDistance());

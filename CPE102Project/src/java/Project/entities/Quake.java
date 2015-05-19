@@ -15,7 +15,7 @@ extends AnimationRate{
     }
 
     public Actions createEntityDeathAction(WorldModel world){
-        Actions [] action = null;
+        Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
             Point pt = this.getPosition();

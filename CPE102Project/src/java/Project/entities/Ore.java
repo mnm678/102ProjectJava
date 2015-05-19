@@ -20,7 +20,7 @@ extends Animated{
     }
 
     public Actions createOreTransformAction(WorldModel world){
-        Actions [] action = null;
+        Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
             OreBlob blob = world.createBlob(this.getName() + " -- blob",

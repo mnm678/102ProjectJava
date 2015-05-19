@@ -1,4 +1,5 @@
 package src.java.Project;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import processing.core.PImage;
 import src.java.Project.entities.*;
 
@@ -77,7 +78,8 @@ public class WorldModel{
         loc = new ArrayList<>();
 
         for(Entity e : this.entities) {
-            if (type == e.getType()) {
+            if (type.equals(e.getType())) {
+                //System.out.println("in findNearest");
                 InteractiveEntity e2 = (InteractiveEntity) e;
                 ofType.add(e2);
                 loc.add(pt.distanceSq(e2.getPosition()));
@@ -128,6 +130,7 @@ public class WorldModel{
 
     public void scheduleAction(Actions action, long time){
         this.actionQueue.insert(action, time);
+        //System.out.println("add action");
     }
 
     public void unscheduleAction(Actions action){
@@ -135,8 +138,11 @@ public class WorldModel{
     }
 
     public void updateOnTime(long ticks){
+        //System.out.println(actionQueue);
         ListItem next = this.actionQueue.head();
-        while(!(next.equals(null)) && next.getOrd() < ticks){
+        //System.out.println(next.getOrd());
+        while(next != null && next.getOrd() < ticks){
+            //System.out.println(next);
             this.actionQueue.pop();
             next.getItem().doAction(ticks);
             next = this.actionQueue.head();
@@ -196,8 +202,8 @@ public class WorldModel{
     }
 
     public Point findOpenAround(Point pt, int distance){
-        for(int dy = distance - 1; dy < distance + 2; dy++){
-            for(int dx = distance - 1; dx < distance + 2; dx++){
+        for(int dy = distance - 1; dy < distance + 1; dy++){
+            for(int dx = distance - 1; dx < distance + 1; dx++){
                 Point newPt;
                 newPt = new Point(pt.getX() + dx, pt.getY() + dy);
                 if(this.withinBounds(newPt) && !(this.isOccupied(newPt))){
@@ -294,7 +300,9 @@ public class WorldModel{
 
     public InteractiveEntity nearestEntity(List<InteractiveEntity> e, List<Double> dist){
         InteractiveEntity ePair = null;
+        //System.out.println("in nearestEntity1");
         if(e.size() > 0){
+            //System.out.println("in nearestEntity2");
             ePair = e.get(0);
             double distPair = dist.get(0);
             for(int i = 0; i < e.size(); i++){
@@ -308,8 +316,10 @@ public class WorldModel{
     }
 
     public Boolean adjacent(Point p1, Point p2){
-        return ((p1.getX() == p2.getX() && Math.abs(p1.getY() - p2.getY()) == 1) ||
-                (p1.getY() == p2.getY() && Math.abs(p1.getX() - p2.getX()) == 1));
+        //System.out.println(Math.abs(p1.getX() - p2.getX()));
+        Boolean temp1 =  (p1.getX() == p2.getX() && Math.abs(p1.getY() - p2.getY()) == 1);
+        Boolean temp2 =  (p1.getY() == p2.getY() && Math.abs(p1.getX() - p2.getX()) == 1);
+        return temp1 || temp2;
     }
 
     public int sign(int x){

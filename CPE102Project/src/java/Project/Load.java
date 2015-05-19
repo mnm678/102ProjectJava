@@ -88,7 +88,7 @@ public class Load {
         world = WorldModel.getInstance();
     }
 
-    public static void loadWorld(String args, boolean run, WorldModel world){
+    public static void loadWorld(String args, boolean run, WorldModel world, long ticks){
         try{
             Scanner data = new Scanner(new FileInputStream(args));
             while (data.hasNextLine()){
@@ -98,7 +98,7 @@ public class Load {
                         addBackground(properties, world);
                     }
                     else{
-                        addEntity(properties,run, world);
+                        addEntity(properties,run, world, ticks);
                     }
                 }
             }
@@ -116,12 +116,12 @@ public class Load {
         }
     }
 
-    public static void addEntity(String[] properties, boolean run, WorldModel world){
+    public static void addEntity(String[] properties, boolean run, WorldModel world, long ticks){
         InteractiveEntity newEntity = createFromProperties(properties);
         if (newEntity != null){
             world.addEntity(newEntity);
             if (run){
-                //scheduleEntity(newEntity);
+                scheduleEntity(newEntity, ticks, world);
             }
         }
     }
@@ -220,19 +220,22 @@ public class Load {
             return null;
         }
     }
-/*
-    public void scheduleEntity(InteractiveEntity entity){
+
+    public static void scheduleEntity(InteractiveEntity entity, long ticks, WorldModel world){
         if(entity instanceof MinerNotFull){
-            scheduleMiner(0);
+            MinerNotFull newEntity = (MinerNotFull) entity;
+            newEntity.scheduleMiner(world,ticks);
         }
         else if(entity instanceof Vein){
-            scheduleVein(0);
+            Vein newEntity = (Vein) entity;
+            newEntity.scheduleVein(world,ticks);
         }
         else if(entity instanceof Ore){
-            scheduleOre(0);
+            Ore newEntity = (Ore) entity;
+            newEntity.scheduleOre(world, ticks);
         }
     }
-    */
+
 
     public static List<PImage> getImages(String key){
         return map.get(key);
@@ -255,7 +258,7 @@ public class Load {
             String key = attrs[0];
             PImage img = controller.loadImage(attrs[1]);
             if(key.equals("miner")){
-                img = controller.setAlpha(controller.loadImage(attrs[1]), controller.color(255, 255, 255), 0);
+                img = controller.setAlpha(img, controller.color(252, 252, 252), 0);
             }
 
             if(img != null){
@@ -269,7 +272,7 @@ public class Load {
     public List<PImage> getImagesInternal(String key){
         List<PImage> temp = new ArrayList<>();
         for(Map.Entry<String, List<PImage>> entry : map.entrySet()){
-            if(entry.getKey() == key){
+            if(entry.getKey().equals(key)){
                 temp = entry.getValue();
             }
         }

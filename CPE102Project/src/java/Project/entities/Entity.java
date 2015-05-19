@@ -26,6 +26,7 @@ public abstract class Entity {
     }
 
     public void nextImage(){
-        currentImg = (currentImg +1) % imgs.size();
+        this.currentImg = (currentImg +1) % imgs.size();
+        System.out.println(currentImg);
     }
 }

@@ -5,6 +5,7 @@ import processing.core.PImage;
 import src.java.Project.Types;
 import src.java.Project.WorldModel;
 
+import java.lang.invoke.WrongMethodTypeException;
 import java.util.List;
 
 public class MinerFull
@@ -53,5 +54,10 @@ public class MinerFull
                 this.getAnimationRate());
         return newEntity;
 
+    }
+
+    public void scheduleMiner(WorldModel world, long ticks){
+        world.actionScheduleAction(this,createMinerAction(world),ticks+this.getRate());
+        world.scheduleAnimation(this);
     }
 }
