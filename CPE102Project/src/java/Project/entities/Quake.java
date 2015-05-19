@@ -17,7 +17,7 @@ extends AnimationRate{
     public Actions createEntityDeathAction(WorldModel world){
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
-            removePendingAction(action[0]);
+            this.removePendingAction(action[0]);
             //Point pt = this.getPosition();
             this.removeEntity(world);
         };
@@ -25,6 +25,7 @@ extends AnimationRate{
     }
 
     public void scheduleQuake(WorldModel world, long ticks){
+        System.out.println("scheduleQuake");
         world.scheduleAnimation(this, world.quakeSteps);
         world.actionScheduleAction(this, this.createEntityDeathAction(world),
                 ticks + world.quakeDuration);

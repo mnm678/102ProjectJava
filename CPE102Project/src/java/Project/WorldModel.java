@@ -85,14 +85,20 @@ public class WorldModel{
         }
         double smallest = ofType.get(0).getPosition().distanceSq(pt);
         for(InteractiveEntity i : ofType){
-            if(i.getPosition().distanceSq(pt) < smallest){
+            double newsmallest = i.getPosition().distanceSq(pt);
+            System.out.println("check: " + i.getPosition().getX() + " " + i.getPosition().getY() + " : " + newsmallest);
+            if(newsmallest < smallest){
+                System.out.println("\tnearer");
+                smallest = newsmallest;
                 mindex = ofType.indexOf(i);
             }
         }
         return ofType.get(mindex);
     }
 
-    /*public Entity findNearest(Point pt, Types type){
+    /*
+    These don't work for some reason, replaced with the above
+    public Entity findNearest(Point pt, Types type){
         List<InteractiveEntity> ofType;
         List<Double> loc;
         ofType = new ArrayList<>();
@@ -172,6 +178,7 @@ public class WorldModel{
     }
 
     public void scheduleAction(Actions action, long time){
+        //System.out.println(action);
         this.actionQueue.insert(action, time);
         //System.out.println("add action");
     }
@@ -201,6 +208,8 @@ public class WorldModel{
         }
     }
 
+
+    //only used in save
     public Entity getBackground(Point pt){
         if(this.withinBounds(pt)){
             return this.background.getCell(pt);
@@ -276,10 +285,12 @@ public class WorldModel{
         Quake quake = new Quake("quake", Load.map.get("quake"), pt,
                 quakeAnimationRate
         );
+        System.out.println("createQuake");
         quake.scheduleQuake(this, ticks);
         return quake;
     }
 
+    //I can't find where this was used even in Python
     public Vein createVein(String name, Point pt, long ticks){
         Vein vein = new Vein("vein" + name, Load.map.get("ore"),
                 veinRateMin + (int)Math.random() * veinRateMax, pt

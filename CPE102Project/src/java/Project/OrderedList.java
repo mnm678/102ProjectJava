@@ -16,12 +16,13 @@ public class OrderedList {
     public void remove(Actions item){
         int size = list.size();
         int idx = 0;
-        while(idx < size && list.get(idx) != item){
-            System.out.println(list.get(idx).getItem());
+        while(idx < size && list.get(idx).getItem() != item){
+            //System.out.println(list.get(idx).getItem());
             idx +=1;
         }
         if(idx < size){
-            list.set(idx, null);
+            //list.set(idx, null);
+            list.remove(idx);
         }
     }
 

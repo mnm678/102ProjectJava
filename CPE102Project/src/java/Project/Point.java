@@ -22,6 +22,6 @@ public class Point {
     }
 
     public double distanceSq(Point other){
-        return Math.pow(this.getX()-other.getX(), 2) + Math.pow(this.getY()-other.getX(), 2);
+        return Math.pow(this.getX()-other.getX(), 2) + Math.pow(this.getY()-other.getY(), 2);
     }
 }

@@ -29,6 +29,8 @@ public class MinerNotFull
             return false;
         }
         Point orePt = ore.getPosition();
+        System.out.println(minerPt.getX() + " " + minerPt.getY());
+        System.out.println(orePt.getX() + " " + orePt.getY());
         if(world.adjacent(minerPt,orePt)){
             //System.out.println("adjacent ore");
             this.setResourceCount(1+this.getResourceCount());

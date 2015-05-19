@@ -33,6 +33,7 @@ extends AnimationRate{
             Point newPt = this.blobNextPosition(world, veinPt);
             Entity oldEntity = world.getTileOccupant(newPt);
             if(oldEntity instanceof Ore){
+                //System.out.println("hit");
                 ((Ore) oldEntity).removeEntity(world);
             }
             world.moveEntity(this, newPt);
@@ -47,11 +48,18 @@ extends AnimationRate{
 
             Point entityPt = this.getPosition();
             Vein vein =  (Vein) world.findNearest(entityPt, Types.VEIN);
+            Point vPt = null;
+            if (vein != null)
+            {
+                vPt = vein.getPosition();
+            }
             Boolean found = blobToVein(world, vein);
 
             long nextTime = currentTicks + getRate();
             if(found){
-                Quake quake = world.createQuake(vein.getPosition(), currentTicks);
+                System.out.println("OreBlob found vein");
+                Quake quake = world.createQuake(vPt, currentTicks);
+                world.removeEntity(vein);
                 world.addEntity(quake);
                 nextTime = currentTicks + getRate() *2;
             }

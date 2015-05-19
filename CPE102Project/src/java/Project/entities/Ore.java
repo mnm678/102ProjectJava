@@ -23,6 +23,7 @@ extends Animated{
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
+            //System.out.println("Blob created");
             OreBlob blob = world.createBlob(this.getName() + " -- blob",
                     this.getPosition(),
                     this.getRate()/world.blobRateScale,
