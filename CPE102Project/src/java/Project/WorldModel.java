@@ -4,6 +4,7 @@ import processing.core.PImage;
 import src.java.Project.entities.*;
 
 import javax.swing.*;
+import java.lang.reflect.Array;
 import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,26 @@ public class WorldModel{
 
 
     public Entity findNearest(Point pt, Types type){
+        ArrayList<InteractiveEntity> ofType = new ArrayList<InteractiveEntity>();
+        int mindex = 0;
+        for(InteractiveEntity e : this.entities){
+            if(type == e.getType()){
+                ofType.add(e);
+            }
+        }
+        if(ofType.size() == 0){
+            return null;
+        }
+        double smallest = ofType.get(0).getPosition().distanceSq(pt);
+        for(InteractiveEntity i : ofType){
+            if(i.getPosition().distanceSq(pt) < smallest){
+                mindex = ofType.indexOf(i);
+            }
+        }
+        return ofType.get(mindex);
+    }
+
+    /*public Entity findNearest(Point pt, Types type){
         List<InteractiveEntity> ofType;
         List<Double> loc;
         ofType = new ArrayList<>();
@@ -88,7 +109,23 @@ public class WorldModel{
         return nearestEntity(ofType, loc);
     }
 
-
+    public InteractiveEntity nearestEntity(List<InteractiveEntity> e, List<Double> dist) {
+        InteractiveEntity ePair = null;
+        //System.out.println("in nearestEntity1");
+        if (e.size() > 0) {
+            //System.out.println("in nearestEntity2");
+            ePair = e.get(0);
+            double distPair = dist.get(0);
+            for (int i = 0; i < e.size(); i++) {
+                if (dist.get(i) < distPair) {
+                    distPair = dist.get(i);
+                    ePair = e.get(i);
+                }
+            }
+        }
+        return ePair;
+    }
+*/
     public void addEntity(InteractiveEntity entity){
         Point pt = entity.getPosition();
         if(this.withinBounds(pt)){
@@ -187,11 +224,11 @@ public class WorldModel{
     }
 
     public Point nextPosition(Point entityPt, Point destPt){
-        int horiz = Integer.signum(destPt.getX() - entityPt.getX());
+        int horiz = sign(destPt.getX() - entityPt.getX());
         Point newPt = new Point(entityPt.getX() + horiz, entityPt.getY());
 
         if(horiz == 0 || this.isOccupied(newPt)){
-            int vert = Integer.signum(destPt.getY() - entityPt.getY());
+            int vert = sign(destPt.getY() - entityPt.getY());
             newPt = new Point(entityPt.getX(), entityPt.getY() + vert);
 
             if(vert ==0 || this.isOccupied(newPt)){
@@ -202,8 +239,8 @@ public class WorldModel{
     }
 
     public Point findOpenAround(Point pt, int distance){
-        for(int dy = distance - 1; dy < distance + 1; dy++){
-            for(int dx = distance - 1; dx < distance + 1; dx++){
+        for(int dy = - 1; dy < distance + 1; dy++){
+            for(int dx = - 1; dx < distance + 1; dx++){
                 Point newPt;
                 newPt = new Point(pt.getX() + dx, pt.getY() + dy);
                 if(this.withinBounds(newPt) && !(this.isOccupied(newPt))){
@@ -217,7 +254,7 @@ public class WorldModel{
     public OreBlob createBlob(String name, Point pt, int rate, long ticks){
         OreBlob blob = new OreBlob(name, Load.map.get("blob"),
                 pt, rate, (blobAnimationMin + (int)Math.random()*blobAnimationMax) * blobAnimationRateScale);
-        blob.scheduleBlob(this,ticks);
+        blob.scheduleBlob(this, ticks);
         return blob;
     }
 
@@ -225,7 +262,7 @@ public class WorldModel{
         Ore ore = new Ore(name, Load.map.get("ore"), pt,
                 oreCorruptMin + (int)Math.random() * oreCorruptMax
         );
-        ore.scheduleOre(this,ticks);
+        ore.scheduleOre(this, ticks);
         return ore;
     }
 
@@ -233,7 +270,7 @@ public class WorldModel{
         Quake quake = new Quake("quake", Load.map.get("quake"), pt,
                 quakeAnimationRate
         );
-        quake.scheduleQuake(this,ticks);
+        quake.scheduleQuake(this, ticks);
         return quake;
     }
 
@@ -254,7 +291,7 @@ public class WorldModel{
 
             if(repeatCount != 1){
                 actionScheduleAction(entity,createAnimationAction(entity, Math.max(repeatCount - 1, 0)),
-                        System.currentTimeMillis() + entity.getAnimationRate());
+                        currentTicks + entity.getAnimationRate());
             }
         };
         return temp[0];
@@ -263,14 +300,16 @@ public class WorldModel{
     public Actions createAnimationAction(AnimationRate entity, int repeatCount){
         Actions [] temp = {null};
         temp[0] = (long currentTicks) ->{
+            //System.out.println("AnimationRate createAnimationAction");
 
             entity.removePendingAction(temp[0]);
 
             entity.nextImage();
 
             if(repeatCount != 1){
+                //System.out.println("in repeat count");
                 actionScheduleAction(entity,createAnimationAction(entity, Math.max(repeatCount - 1, 0)),
-                        System.currentTimeMillis() + entity.getAnimationRate());
+                        currentTicks + entity.getAnimationRate());
             }
         };
         return temp[0];
@@ -286,7 +325,11 @@ public class WorldModel{
     }
 
     public void scheduleAnimation(AnimationRate entity, int repeatCount){
-        actionScheduleAction(entity, createAnimationAction(entity, repeatCount), entity.getAnimationRate());
+        int newRepeatCount = 0;
+        if(entity instanceof Quake){
+            newRepeatCount = repeatCount;
+        }
+        actionScheduleAction(entity, createAnimationAction(entity, newRepeatCount), entity.getAnimationRate());
     }
 
     //handleMouseButton
@@ -298,28 +341,12 @@ public class WorldModel{
         entity.clearPendingActions();
     }
 
-    public InteractiveEntity nearestEntity(List<InteractiveEntity> e, List<Double> dist){
-        InteractiveEntity ePair = null;
-        //System.out.println("in nearestEntity1");
-        if(e.size() > 0){
-            //System.out.println("in nearestEntity2");
-            ePair = e.get(0);
-            double distPair = dist.get(0);
-            for(int i = 0; i < e.size(); i++){
-                if(dist.get(i) < distPair){
-                    distPair = dist.get(i);
-                    ePair = e.get(i);
-                }
-            }
-        }
-        return ePair;
-    }
-
     public Boolean adjacent(Point p1, Point p2){
         //System.out.println(Math.abs(p1.getX() - p2.getX()));
         Boolean temp1 =  (p1.getX() == p2.getX() && Math.abs(p1.getY() - p2.getY()) == 1);
         Boolean temp2 =  (p1.getY() == p2.getY() && Math.abs(p1.getX() - p2.getX()) == 1);
-        return temp1 || temp2;
+        //System.out.println(temp1 || temp2);
+        return (temp1 || temp2);
     }
 
     public int sign(int x){

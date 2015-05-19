@@ -23,7 +23,7 @@ public class MinerFull
     }
 
     public Boolean startingAction(Point entityPt, WorldModel world){
-        Blacksmith smith = (Blacksmith) world.findNearest(entityPt, Types.ORE);
+        Blacksmith smith = (Blacksmith) world.findNearest(entityPt, Types.BLACKSMITH);
         return minerToSmith(world, smith);
     }
 
@@ -43,6 +43,7 @@ public class MinerFull
         }
         else{
             Point newPt = world.nextPosition(minerPt,smithPt);
+            world.moveEntity(this, newPt);
             return false;
         }
     }

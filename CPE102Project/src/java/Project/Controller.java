@@ -100,11 +100,11 @@ public class Controller extends PApplet{
                 entity.updateImage();
                 System.out.println(entity.getType());
             }*/
-            //view.drawViewport();
+            view.drawViewport();
             handleTimerEvent();
             nextTime = System.currentTimeMillis() + 100;
         }
-        view.drawViewport();
+        //view.drawViewport();
     }
 
     public static PImage setAlpha(PImage img, int maskColor, int alpha)

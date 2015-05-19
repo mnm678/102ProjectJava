@@ -257,7 +257,7 @@ public class Load {
         if(attrs.length >=2){
             String key = attrs[0];
             PImage img = controller.loadImage(attrs[1]);
-            if(key.equals("miner")){
+            if(key.equals("miner") || key.equals("ore")){
                 img = controller.setAlpha(img, controller.color(252, 252, 252), 0);
             }
 

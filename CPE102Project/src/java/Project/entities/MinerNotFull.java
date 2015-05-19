@@ -36,7 +36,9 @@ public class MinerNotFull
             return true;
         }
         else{
-            //Point newPt = world.nextPosition(minerPt,orePt);
+            Point newPt = world.nextPosition(minerPt,orePt);
+            world.moveEntity(this, newPt);
+            //System.out.println("hit");
             return false;
         }
     }

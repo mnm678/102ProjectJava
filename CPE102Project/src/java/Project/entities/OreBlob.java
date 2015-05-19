@@ -35,6 +35,7 @@ extends AnimationRate{
             if(oldEntity instanceof Ore){
                 ((Ore) oldEntity).removeEntity(world);
             }
+            world.moveEntity(this, newPt);
             return false;
         }
     }
