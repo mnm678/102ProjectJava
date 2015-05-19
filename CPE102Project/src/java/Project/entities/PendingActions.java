@@ -37,7 +37,7 @@ public abstract class PendingActions extends InteractiveEntity {
         for(Actions action : pendingActions){
             world.unscheduleAction(action);
         }
-        clearPendingActions();
+        this.clearPendingActions();
         world.removeEntity(this);
     }
 }

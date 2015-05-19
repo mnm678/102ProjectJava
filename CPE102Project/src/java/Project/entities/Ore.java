@@ -27,7 +27,7 @@ extends Animated{
                     this.getPosition(),
                     this.getRate()/world.blobRateScale,
                     currentTicks);
-            removeEntity(world);
+            this.removeEntity(world);
             world.addEntity(blob);
         };
         return action[0];

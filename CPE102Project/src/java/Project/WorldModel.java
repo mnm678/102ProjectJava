@@ -159,9 +159,15 @@ public class WorldModel{
         if(this.withinBounds(pt) &&
                 this.occupancy.getCell(pt) != null){
             InteractiveEntity entity = (InteractiveEntity) this.occupancy.getCell(pt);
-            entity.setPosition(new Point(pt.getX()-1, pt.getY()-1));
+            entity.setPosition(new Point(-1, -1));
             this.entities.remove(entity);
             this.occupancy.setCell(pt, null);
+            /*if(entity instanceof PendingActions){
+                List<Actions> actions = ((PendingActions) entity).getPendingActions();
+                for(Actions action : actions) {
+                    ((PendingActions) entity).removePendingAction(action);
+                }
+            }*/
         }
     }
 

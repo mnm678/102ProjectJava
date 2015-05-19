@@ -30,6 +30,7 @@ public class MinerFull
     public Miner returnType(WorldModel world){
         return tryTransformMinerFull(world);
     }
+
     public Boolean minerToSmith(WorldModel world, Blacksmith smith){
         Point minerPt = this.getPosition();
         if(smith.equals(null)){
