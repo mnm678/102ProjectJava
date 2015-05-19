@@ -28,7 +28,7 @@ public class OrderedList {
         int size = list.size();
         int idx = 0;
         while(idx < size && list.get(idx).getOrd() < ord){
-            idx +=1;
+            idx ++;
         }
 
         list.add(idx, new ListItem(item, ord));

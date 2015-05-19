@@ -257,9 +257,13 @@ public class Load {
         if(attrs.length >=2){
             String key = attrs[0];
             PImage img = controller.loadImage(attrs[1]);
-            if(key.equals("miner") || key.equals("ore")){
+            if(key.equals("miner")){
                 img = controller.setAlpha(img, controller.color(252, 252, 252), 0);
             }
+            if(key.equals("blob") || key.equals("quake")){
+                img = controller.setAlpha(img, controller.color(255, 255, 255), 0);
+            }
+
 
             if(img != null){
                 List<PImage> imgs = getImagesInternal(key);

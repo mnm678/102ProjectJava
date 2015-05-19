@@ -325,11 +325,7 @@ public class WorldModel{
     }
 
     public void scheduleAnimation(AnimationRate entity, int repeatCount){
-        int newRepeatCount = 0;
-        if(entity instanceof Quake){
-            newRepeatCount = repeatCount;
-        }
-        actionScheduleAction(entity, createAnimationAction(entity, newRepeatCount), entity.getAnimationRate());
+        actionScheduleAction(entity, createAnimationAction(entity, repeatCount), entity.getAnimationRate());
     }
 
     //handleMouseButton

@@ -21,7 +21,7 @@ extends AnimationRate{
 
     public boolean blobToVein(WorldModel world, Vein vein){
         Point blobPt = this.getPosition();
-        if(vein.equals(null)){
+        if(vein == null){
             return false;
         }
         Point veinPt = vein.getPosition();
@@ -64,6 +64,7 @@ extends AnimationRate{
     public void scheduleBlob(WorldModel world, long ticks){
         world.actionScheduleAction(this, createOreBlobAction(world),
                 ticks + this.getRate());
+        world.scheduleAnimation(this,0);
     }
 
     public Point blobNextPosition(WorldModel world, Point destPt){
