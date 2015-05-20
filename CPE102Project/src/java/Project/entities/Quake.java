@@ -14,20 +14,18 @@ extends AnimationRate{
         super(name, imgs, position, animationRate);
     }
 
-    public Actions createEntityDeathAction(WorldModel world){
+    public Actions createEntityDeathAction(){
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             this.removePendingAction(action[0]);
-            //Point pt = this.getPosition();
-            this.removeEntity(world);
+            this.removeEntity();
         };
         return action[0];
     }
 
-    public void scheduleQuake(WorldModel world, long ticks){
-        System.out.println("scheduleQuake");
+    public void scheduleQuake(long ticks){
         world.scheduleAnimation(this, world.quakeSteps);
-        world.actionScheduleAction(this, this.createEntityDeathAction(world),
+        world.actionScheduleAction(this, this.createEntityDeathAction(),
                 ticks + world.quakeDuration);
     }
 }

@@ -22,30 +22,25 @@ public class MinerNotFull
         this.resourceCount = n;
     }
 
-    public Boolean minerToOre(WorldModel world, Ore ore){
+    public Boolean minerToOre(Ore ore){
         Point minerPt = this.getPosition();
         if(ore == null){
-            //System.out.println("null ore");
             return false;
         }
         Point orePt = ore.getPosition();
-        System.out.println(minerPt.getX() + " " + minerPt.getY());
-        System.out.println(orePt.getX() + " " + orePt.getY());
         if(world.adjacent(minerPt,orePt)){
-            //System.out.println("adjacent ore");
             this.setResourceCount(1+this.getResourceCount());
-            ore.removeEntity(world);
+            ore.removeEntity();
             return true;
         }
         else{
             Point newPt = world.nextPosition(minerPt,orePt);
             world.moveEntity(this, newPt);
-            //System.out.println("hit");
             return false;
         }
     }
 
-    public Miner tryTransformMinerNotFull(WorldModel world){
+    public Miner tryTransformMinerNotFull(){
         if(this.resourceCount < this.getResourceLimit()){
             return this;
         }
@@ -58,18 +53,17 @@ public class MinerNotFull
         }
     }
 
-    public void scheduleMiner(WorldModel world, long ticks){
-        world.actionScheduleAction(this, createMinerAction(world), ticks + this.getRate());
+    public void scheduleMiner(long ticks){
+        world.actionScheduleAction(this, createMinerAction(), ticks + this.getRate());
         world.scheduleAnimation(this);
     }
 
-    public Boolean startingAction(Point entityPt, WorldModel world){
+    public Boolean startingAction(Point entityPt){
         Ore ore = (Ore) world.findNearest(entityPt, Types.ORE);
-        //System.out.println("in notFull starting action");
-        return minerToOre(world, ore);
+        return minerToOre(ore);
     }
 
-    public Miner returnType(WorldModel world){
-        return tryTransformMinerNotFull(world);
+    public Miner returnType(){
+        return tryTransformMinerNotFull();
     }
 }

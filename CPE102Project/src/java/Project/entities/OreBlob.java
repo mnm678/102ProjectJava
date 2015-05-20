@@ -19,29 +19,28 @@ extends AnimationRate{
         return this.rate;
     }
 
-    public boolean blobToVein(WorldModel world, Vein vein){
+    public boolean blobToVein(Vein vein){
         Point blobPt = this.getPosition();
         if(vein == null){
             return false;
         }
         Point veinPt = vein.getPosition();
         if(world.adjacent(blobPt, veinPt)){
-            vein.removeEntity(world);
+            vein.removeEntity();
             return true;
         }
         else{
-            Point newPt = this.blobNextPosition(world, veinPt);
+            Point newPt = this.blobNextPosition(veinPt);
             Entity oldEntity = world.getTileOccupant(newPt);
             if(oldEntity instanceof Ore){
-                //System.out.println("hit");
-                ((Ore) oldEntity).removeEntity(world);
+                ((Ore) oldEntity).removeEntity();
             }
             world.moveEntity(this, newPt);
             return false;
         }
     }
 
-    public Actions createOreBlobAction(WorldModel world){
+    public Actions createOreBlobAction(){
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
@@ -53,29 +52,28 @@ extends AnimationRate{
             {
                 vPt = vein.getPosition();
             }
-            Boolean found = blobToVein(world, vein);
+            Boolean found = blobToVein(vein);
 
             long nextTime = currentTicks + getRate();
             if(found){
-                System.out.println("OreBlob found vein");
                 Quake quake = world.createQuake(vPt, currentTicks);
                 world.removeEntity(vein);
                 world.addEntity(quake);
                 nextTime = currentTicks + getRate() *2;
             }
 
-            world.actionScheduleAction(this, createOreBlobAction(world), nextTime);
+            world.actionScheduleAction(this, createOreBlobAction(), nextTime);
         };
         return action[0];
     }
 
-    public void scheduleBlob(WorldModel world, long ticks){
-        world.actionScheduleAction(this, createOreBlobAction(world),
+    public void scheduleBlob(long ticks){
+        world.actionScheduleAction(this, createOreBlobAction(),
                 ticks + this.getRate());
         world.scheduleAnimation(this,0);
     }
 
-    public Point blobNextPosition(WorldModel world, Point destPt){
+    public Point blobNextPosition(Point destPt){
         int horiz = world.sign(destPt.getX() - this.getPosition().getX());
         Point newPt = new Point(this.getPosition().getX() + horiz, this.getPosition().getY());
 

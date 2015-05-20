@@ -33,7 +33,7 @@ public abstract class PendingActions extends InteractiveEntity {
         pendingActions = new ArrayList<>();
     }
 
-    public void removeEntity(WorldModel world){
+    public void removeEntity(){
         for(Actions action : pendingActions){
             world.unscheduleAction(action);
         }

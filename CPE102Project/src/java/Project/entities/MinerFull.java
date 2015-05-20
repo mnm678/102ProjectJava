@@ -22,16 +22,16 @@ public class MinerFull
         this.resourceCount = n;
     }
 
-    public Boolean startingAction(Point entityPt, WorldModel world){
+    public Boolean startingAction(Point entityPt){
         Blacksmith smith = (Blacksmith) world.findNearest(entityPt, Types.BLACKSMITH);
-        return minerToSmith(world, smith);
+        return minerToSmith(smith);
     }
 
-    public Miner returnType(WorldModel world){
-        return tryTransformMinerFull(world);
+    public Miner returnType(){
+        return tryTransformMinerFull();
     }
 
-    public Boolean minerToSmith(WorldModel world, Blacksmith smith){
+    public Boolean minerToSmith(Blacksmith smith){
         Point minerPt = this.getPosition();
         if(smith.equals(null)){
             return false;
@@ -49,7 +49,7 @@ public class MinerFull
         }
     }
 
-    public Miner tryTransformMinerFull(WorldModel world){
+    public Miner tryTransformMinerFull(){
         Miner newEntity = new MinerNotFull(this.getName(), this.getImages(),
                 this.getResourceLimit(),
                 this.getPosition(), this.getRate(),
@@ -58,8 +58,8 @@ public class MinerFull
 
     }
 
-    public void scheduleMiner(WorldModel world, long ticks){
-        world.actionScheduleAction(this,createMinerAction(world),ticks+this.getRate());
+    public void scheduleMiner(long ticks){
+        world.actionScheduleAction(this,createMinerAction(),ticks+this.getRate());
         world.scheduleAnimation(this);
     }
 }

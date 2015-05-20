@@ -19,23 +19,22 @@ extends Animated{
         return Types.ORE;
     }
 
-    public Actions createOreTransformAction(WorldModel world){
+    public Actions createOreTransformAction(){
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
-            //System.out.println("Blob created");
             OreBlob blob = world.createBlob(this.getName() + " -- blob",
                     this.getPosition(),
                     this.getRate()/world.blobRateScale,
                     currentTicks);
-            this.removeEntity(world);
+            this.removeEntity();
             world.addEntity(blob);
         };
         return action[0];
     }
 
-    public void scheduleOre(WorldModel world, long ticks){
-        world.actionScheduleAction(this, createOreTransformAction(world),
+    public void scheduleOre(long ticks){
+        world.actionScheduleAction(this, createOreTransformAction(),
                 ticks + this.getRate());
     }
 };

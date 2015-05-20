@@ -2,10 +2,6 @@ package src.java.Project;
 
 import processing.core.*;
 import src.java.Project.entities.Background;
-import src.java.Project.entities.Entity;
-import src.java.Project.entities.InteractiveEntity;
-
-import java.awt.*;
 
 /**
  * Created by marinamoore on 5/10/15.
@@ -37,11 +33,9 @@ public class Controller extends PApplet{
     private final String imageListFileName = "src/java/Project/imagelist";
 
     private final String defaultImageName = "background_default";
-    //private Entity defaultBackground = Main.createDefaultBackground(getImages(defaultImageName));
 
 
     public Controller() {
-        //view.init(screenWidth / tileWidth, screenHeight / tileHeight, tileWidth, tileHeight, this);
         load.init(this);
     }
 
@@ -55,12 +49,8 @@ public class Controller extends PApplet{
 
 
         load.loadImages(imageListFileName);
-        //PImage grass = load.getImages("grass").get(0);
-        //Load.testDraw();
-        //image(grass, 32, 0);
-        //view.drawTile(test, new Point(2, 2));
 
-        Load.loadWorld(worldFile, true, world, System.currentTimeMillis());
+        Load.loadWorld(worldFile, true, System.currentTimeMillis());
         view.init(screenWidth / tileWidth, screenHeight / tileHeight, tileWidth, tileHeight, this);
         view.drawViewport();
         test = setAlpha(loadImage("miner1.bmp"), color(255, 255, 255), 0);
@@ -92,19 +82,13 @@ public class Controller extends PApplet{
     }
 
     public void draw(){
-        //System.out.println(world.actionQueue.list);
 
         long time = System.currentTimeMillis();
         if(time >= nextTime){
-            /*for(InteractiveEntity entity : world.getEntities()){
-                entity.updateImage();
-                System.out.println(entity.getType());
-            }*/
             view.drawViewport();
             handleTimerEvent();
             nextTime = System.currentTimeMillis() + 100;
         }
-        //view.drawViewport();
     }
 
     public static PImage setAlpha(PImage img, int maskColor, int alpha)

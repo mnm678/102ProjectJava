@@ -26,7 +26,7 @@ extends Animated{
         return Types.VEIN;
     }
 
-    public Actions createVeinAction(WorldModel world){
+    public Actions createVeinAction(){
         Actions [] action = {null};
         action[0] = (long currentTicks) ->{
             removePendingAction(action[0]);
@@ -37,14 +37,14 @@ extends Animated{
                 world.addEntity(ore);
             }
 
-            world.actionScheduleAction(this, this.createVeinAction(world),
+            world.actionScheduleAction(this, this.createVeinAction(),
                     currentTicks + this.getRate());
         };
         return action[0];
     }
 
-    public void scheduleVein(WorldModel world, long ticks){
-        world.actionScheduleAction(this, this.createVeinAction(world),
+    public void scheduleVein(long ticks){
+        world.actionScheduleAction(this, this.createVeinAction(),
                 ticks + this.getRate());
     }
 }

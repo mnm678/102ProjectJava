@@ -12,17 +12,6 @@ import java.util.List;
  */
 public class Main{
 
-    private static final String defaultImageName = "background_default";
-
-
-    private WorldView view = WorldView.getInstance();
-    private WorldModel world = WorldModel.getInstance();
-
-
-    public Main(){
-
-    }
-
     public static void main(String[] args){
         PApplet.main("src.java.Project.Controller");
     }

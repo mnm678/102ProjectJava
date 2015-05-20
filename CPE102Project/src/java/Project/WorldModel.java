@@ -1,11 +1,7 @@
 package src.java.Project;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import processing.core.PImage;
 import src.java.Project.entities.*;
 
-import javax.swing.*;
-import java.lang.reflect.Array;
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +29,6 @@ public class WorldModel{
     public final int quakeDuration = 1100;
     private final int quakeAnimationRate = 100;
 
-    private final int veinSpawnDelay = 500;
-    private final int veinRateMin = 8000;
-    private final int veinRateMax = 17000;
-
     public static WorldModel getInstance(){
         if(instance == null){
             instance =  new WorldModel();
@@ -49,7 +41,7 @@ public class WorldModel{
         this.numRows = numRows;
         this.numCols = numCols;
         this.occupancy = new Grid(numCols, numRows, null);
-        this.entities = new ArrayList<InteractiveEntity>();
+        this.entities = new ArrayList<>();
         this.actionQueue = new OrderedList();
     }
 
@@ -73,7 +65,7 @@ public class WorldModel{
 
 
     public Entity findNearest(Point pt, Types type){
-        ArrayList<InteractiveEntity> ofType = new ArrayList<InteractiveEntity>();
+        ArrayList<InteractiveEntity> ofType = new ArrayList<>();
         int mindex = 0;
         for(InteractiveEntity e : this.entities){
             if(type == e.getType()){
@@ -86,9 +78,7 @@ public class WorldModel{
         double smallest = ofType.get(0).getPosition().distanceSq(pt);
         for(InteractiveEntity i : ofType){
             double newsmallest = i.getPosition().distanceSq(pt);
-            System.out.println("check: " + i.getPosition().getX() + " " + i.getPosition().getY() + " : " + newsmallest);
             if(newsmallest < smallest){
-                System.out.println("\tnearer");
                 smallest = newsmallest;
                 mindex = ofType.indexOf(i);
             }
@@ -96,49 +86,9 @@ public class WorldModel{
         return ofType.get(mindex);
     }
 
-    /*
-    These don't work for some reason, replaced with the above
-    public Entity findNearest(Point pt, Types type){
-        List<InteractiveEntity> ofType;
-        List<Double> loc;
-        ofType = new ArrayList<>();
-        loc = new ArrayList<>();
-
-        for(Entity e : this.entities) {
-            if (type.equals(e.getType())) {
-                //System.out.println("in findNearest");
-                InteractiveEntity e2 = (InteractiveEntity) e;
-                ofType.add(e2);
-                loc.add(pt.distanceSq(e2.getPosition()));
-            }
-        }
-        return nearestEntity(ofType, loc);
-    }
-
-    public InteractiveEntity nearestEntity(List<InteractiveEntity> e, List<Double> dist) {
-        InteractiveEntity ePair = null;
-        //System.out.println("in nearestEntity1");
-        if (e.size() > 0) {
-            //System.out.println("in nearestEntity2");
-            ePair = e.get(0);
-            double distPair = dist.get(0);
-            for (int i = 0; i < e.size(); i++) {
-                if (dist.get(i) < distPair) {
-                    distPair = dist.get(i);
-                    ePair = e.get(i);
-                }
-            }
-        }
-        return ePair;
-    }
-*/
     public void addEntity(InteractiveEntity entity){
         Point pt = entity.getPosition();
         if(this.withinBounds(pt)){
-            Entity oldEntity = this.occupancy.getCell(pt);
-            if(oldEntity instanceof PendingActions){
-                //oldEntity.clearPendingActions();
-            }
             this.occupancy.setCell(pt,entity);
             this.entities.add(entity);
         }
@@ -146,7 +96,7 @@ public class WorldModel{
 
     public List<Point> moveEntity(InteractiveEntity entity, Point pt){
         List<Point> tiles;
-        tiles = new ArrayList<Point>();
+        tiles = new ArrayList<>();
         if(this.withinBounds(pt)){
             Point oldPt = entity.getPosition();
             this.occupancy.setCell(oldPt, null);
@@ -168,19 +118,11 @@ public class WorldModel{
             entity.setPosition(new Point(-1, -1));
             this.entities.remove(entity);
             this.occupancy.setCell(pt, null);
-            /*if(entity instanceof PendingActions){
-                List<Actions> actions = ((PendingActions) entity).getPendingActions();
-                for(Actions action : actions) {
-                    ((PendingActions) entity).removePendingAction(action);
-                }
-            }*/
         }
     }
 
     public void scheduleAction(Actions action, long time){
-        //System.out.println(action);
         this.actionQueue.insert(action, time);
-        //System.out.println("add action");
     }
 
     public void unscheduleAction(Actions action){
@@ -188,11 +130,8 @@ public class WorldModel{
     }
 
     public void updateOnTime(long ticks){
-        //System.out.println(actionQueue);
         ListItem next = this.actionQueue.head();
-        //System.out.println(next.getOrd());
         while(next != null && next.getOrd() < ticks){
-            //System.out.println(next);
             this.actionQueue.pop();
             next.getItem().doAction(ticks);
             next = this.actionQueue.head();
@@ -204,17 +143,6 @@ public class WorldModel{
             return this.background.getCell(pt).getImage();
         }
         else {
-            return null;
-        }
-    }
-
-
-    //only used in save
-    public Entity getBackground(Point pt){
-        if(this.withinBounds(pt)){
-            return this.background.getCell(pt);
-        }
-        else{
             return null;
         }
     }
@@ -269,7 +197,7 @@ public class WorldModel{
     public OreBlob createBlob(String name, Point pt, int rate, long ticks){
         OreBlob blob = new OreBlob(name, Load.map.get("blob"),
                 pt, rate, (blobAnimationMin + (int)Math.random()*blobAnimationMax) * blobAnimationRateScale);
-        blob.scheduleBlob(this, ticks);
+        blob.scheduleBlob(ticks);
         return blob;
     }
 
@@ -277,7 +205,7 @@ public class WorldModel{
         Ore ore = new Ore(name, Load.map.get("ore"), pt,
                 oreCorruptMin + (int)Math.random() * oreCorruptMax
         );
-        ore.scheduleOre(this, ticks);
+        ore.scheduleOre(ticks);
         return ore;
     }
 
@@ -285,17 +213,8 @@ public class WorldModel{
         Quake quake = new Quake("quake", Load.map.get("quake"), pt,
                 quakeAnimationRate
         );
-        System.out.println("createQuake");
-        quake.scheduleQuake(this, ticks);
+        quake.scheduleQuake(ticks);
         return quake;
-    }
-
-    //I can't find where this was used even in Python
-    public Vein createVein(String name, Point pt, long ticks){
-        Vein vein = new Vein("vein" + name, Load.map.get("ore"),
-                veinRateMin + (int)Math.random() * veinRateMax, pt
-        );
-        return vein;
     }
 
     public Actions createAnimationAction(Miner entity, int repeatCount){
@@ -317,14 +236,12 @@ public class WorldModel{
     public Actions createAnimationAction(AnimationRate entity, int repeatCount){
         Actions [] temp = {null};
         temp[0] = (long currentTicks) ->{
-            //System.out.println("AnimationRate createAnimationAction");
 
             entity.removePendingAction(temp[0]);
 
             entity.nextImage();
 
             if(repeatCount != 1){
-                //System.out.println("in repeat count");
                 actionScheduleAction(entity,createAnimationAction(entity, Math.max(repeatCount - 1, 0)),
                         currentTicks + entity.getAnimationRate());
             }
@@ -345,8 +262,6 @@ public class WorldModel{
         actionScheduleAction(entity, createAnimationAction(entity, repeatCount), entity.getAnimationRate());
     }
 
-    //handleMouseButton
-
     public void actionsClearPendingActions(PendingActions entity){
         for(Actions action : entity.getPendingActions()){
             unscheduleAction(action);
@@ -355,10 +270,8 @@ public class WorldModel{
     }
 
     public Boolean adjacent(Point p1, Point p2){
-        //System.out.println(Math.abs(p1.getX() - p2.getX()));
         Boolean temp1 =  (p1.getX() == p2.getX() && Math.abs(p1.getY() - p2.getY()) == 1);
         Boolean temp2 =  (p1.getY() == p2.getY() && Math.abs(p1.getX() - p2.getX()) == 1);
-        //System.out.println(temp1 || temp2);
         return (temp1 || temp2);
     }
 

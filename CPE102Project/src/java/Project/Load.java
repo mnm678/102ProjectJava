@@ -1,13 +1,10 @@
 package src.java.Project;
 
-import processing.core.PApplet;
 import processing.core.PImage;
 import src.java.Project.entities.*;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
-import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -69,11 +66,10 @@ public class Load {
 
     private static final String defaultImageName = "background_default";
 
-    //private List<List<PImage>> iStore;
     public static Map<String,List<PImage>> map = new HashMap<String, List<PImage>>();
 
 
-    private WorldModel world;
+    private static WorldModel world;
     private WorldView view = WorldView.getInstance();
 
     public static Load getInstance(){
@@ -88,17 +84,17 @@ public class Load {
         world = WorldModel.getInstance();
     }
 
-    public static void loadWorld(String args, boolean run, WorldModel world, long ticks){
+    public static void loadWorld(String args, boolean run, long ticks){
         try{
             Scanner data = new Scanner(new FileInputStream(args));
             while (data.hasNextLine()){
                 String [] properties = data.nextLine().split("\\s");
                 if (!(properties==null)){
                     if(properties[propertyKey].equals(bgndKey)){
-                        addBackground(properties, world);
+                        addBackground(properties);
                     }
                     else{
-                        addEntity(properties,run, world, ticks);
+                        addEntity(properties,run, ticks);
                     }
                 }
             }
@@ -108,7 +104,7 @@ public class Load {
         }
     }
 
-    public static void addBackground(String[] properties, WorldModel world){
+    public static void addBackground(String[] properties){
         if (properties.length >= bgndNumProperties){
             Point pt = new Point(Integer.parseInt(properties[bgndCol]), Integer.parseInt(properties[bgndRow]));
             String name = properties[bgndName];
@@ -116,12 +112,12 @@ public class Load {
         }
     }
 
-    public static void addEntity(String[] properties, boolean run, WorldModel world, long ticks){
+    public static void addEntity(String[] properties, boolean run, long ticks){
         InteractiveEntity newEntity = createFromProperties(properties);
         if (newEntity != null){
             world.addEntity(newEntity);
             if (run){
-                scheduleEntity(newEntity, ticks, world);
+                scheduleEntity(newEntity, ticks);
             }
         }
     }
@@ -154,10 +150,6 @@ public class Load {
                     Integer.parseInt(properties[minerRate]),
                     Integer.parseInt(properties[minerAnimationRate])
                     );
-            //System.out.println(properties[minerName]);
-            //System.out.println(Integer.parseInt(properties[minerLimit]));
-            //System.out.println(Integer.parseInt(properties[minerCol]));
-            //System.out.println(Integer.parseInt(properties[minerRow]));
             return miner;
         }
         else{
@@ -221,18 +213,18 @@ public class Load {
         }
     }
 
-    public static void scheduleEntity(InteractiveEntity entity, long ticks, WorldModel world){
+    public static void scheduleEntity(InteractiveEntity entity, long ticks){
         if(entity instanceof MinerNotFull){
             MinerNotFull newEntity = (MinerNotFull) entity;
-            newEntity.scheduleMiner(world,ticks);
+            newEntity.scheduleMiner(ticks);
         }
         else if(entity instanceof Vein){
             Vein newEntity = (Vein) entity;
-            newEntity.scheduleVein(world,ticks);
+            newEntity.scheduleVein(ticks);
         }
         else if(entity instanceof Ore){
             Ore newEntity = (Ore) entity;
-            newEntity.scheduleOre(world, ticks);
+            newEntity.scheduleOre(ticks);
         }
     }
 

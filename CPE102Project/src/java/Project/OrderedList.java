@@ -17,11 +17,9 @@ public class OrderedList {
         int size = list.size();
         int idx = 0;
         while(idx < size && list.get(idx).getItem() != item){
-            //System.out.println(list.get(idx).getItem());
             idx +=1;
         }
         if(idx < size){
-            //list.set(idx, null);
             list.remove(idx);
         }
     }
@@ -54,9 +52,5 @@ public class OrderedList {
         else{
             return null;
         }
-    }
-
-    public int getSize(){
-        return list.size();
     }
 }
