@@ -28,6 +28,10 @@ public class WorldView {
         return instance;
     }
 
+    public Viewport getViewport(){
+        return this.viewport;
+    }
+
     public void init(int viewCols, int viewRows,
                      int tileWidth, int tileHeight, PApplet screen){
         this.viewport = new Viewport(new Point(0,0),viewCols,viewRows);

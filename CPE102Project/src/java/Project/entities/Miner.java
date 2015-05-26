@@ -3,17 +3,37 @@ package src.java.Project.entities;
 import src.java.Project.Actions;
 import src.java.Project.Point;
 import processing.core.PImage;
+import src.java.Project.Types;
 
+import java.util.HashSet;
 import java.util.List;
 
 public abstract class Miner
     extends Animated{
     private int resourceLimit;
     private int animationRate;
+    private List<Point> path;
+    private HashSet<Point> searched;
     public Miner(String name, List<PImage> imgs, int resourceLimit, Point position, int rate, int animationRate){
         super(name, imgs, position, rate);
         this.resourceLimit = resourceLimit;
         this.animationRate = animationRate;
+    }
+
+    public HashSet<Point> getSearched() {
+        return searched;
+    }
+
+    public void setSearched(HashSet<Point> searched) {
+        this.searched = searched;
+    }
+
+    public void setPath(List<Point> path) {
+        this.path = path;
+    }
+
+    public List<Point> getPath() {
+        return path;
     }
 
     public int getResourceLimit(){
@@ -60,4 +80,8 @@ public abstract class Miner
     abstract Miner returnType();
 
     abstract Boolean startingAction(Point pt);
+
+    public Types getType(){
+        return Types.MINER;
+    }
 }

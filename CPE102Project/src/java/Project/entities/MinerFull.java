@@ -1,5 +1,6 @@
 package src.java.Project.entities;
 
+import src.java.Project.AReturn;
 import src.java.Project.Point;
 import processing.core.PImage;
 import src.java.Project.Types;
@@ -43,7 +44,10 @@ public class MinerFull
             return true;
         }
         else{
-            Point newPt = world.nextPosition(minerPt,smithPt);
+            AReturn A = world.ANextPosition(minerPt, smithPt);
+            Point newPt = A.getNextPoint();
+            this.setPath(A.getPath());
+            this.setSearched(A.getSearched());
             world.moveEntity(this, newPt);
             return false;
         }

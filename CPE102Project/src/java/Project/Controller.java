@@ -2,6 +2,8 @@ package src.java.Project;
 
 import processing.core.*;
 import src.java.Project.entities.Background;
+import src.java.Project.entities.Entity;
+import src.java.Project.entities.Miner;
 
 /**
  * Created by marinamoore on 5/10/15.
@@ -34,6 +36,8 @@ public class Controller extends PApplet{
 
     private final String defaultImageName = "background_default";
 
+    private PImage pathImage;
+
 
     public Controller() {
         load.init(this);
@@ -47,6 +51,7 @@ public class Controller extends PApplet{
 
         nextTime = System.currentTimeMillis() + animationTime;
 
+        pathImage = loadImage("redTile.jpeg");
 
         load.loadImages(imageListFileName);
 
@@ -88,6 +93,17 @@ public class Controller extends PApplet{
             view.drawViewport();
             handleTimerEvent();
             nextTime = System.currentTimeMillis() + 100;
+        }
+
+        Point mouseLoc = view.getViewport().toWorld(new Point(mouseX / 32, mouseY / 32));
+        Entity occupant = world.getTileOccupant(mouseLoc);
+        if(occupant != null && occupant.getType() == Types.MINER){
+            Miner miner = (Miner) occupant;
+            if(miner.getPath() != null) {
+                for (Point p : miner.getPath()) {
+                    view.drawTile(pathImage, p);
+                }
+            }
         }
     }
 

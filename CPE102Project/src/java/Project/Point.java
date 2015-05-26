@@ -24,4 +24,23 @@ public class Point {
     public double distanceSq(Point other){
         return Math.pow(this.getX()-other.getX(), 2) + Math.pow(this.getY()-other.getY(), 2);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Point point = (Point) o;
+
+        if (x != point.x) return false;
+        return y == point.y;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = x;
+        result = 31 * result + y;
+        return result;
+    }
 }

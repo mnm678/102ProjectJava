@@ -3,6 +3,8 @@ import processing.core.PImage;
 import src.java.Project.entities.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class WorldModel{
@@ -101,7 +103,7 @@ public class WorldModel{
             Point oldPt = entity.getPosition();
             this.occupancy.setCell(oldPt, null);
             tiles.add(pt);
-            this.occupancy.setCell(pt,entity);
+            this.occupancy.setCell(pt, entity);
             entity.setPosition(pt);
         }
         return tiles;
@@ -164,6 +166,203 @@ public class WorldModel{
 
     public List<InteractiveEntity> getEntities(){
         return this.entities;
+    }
+
+    /*private static class AElement{
+        private Point point;
+        private int gScore;
+        private int hScore;
+        private int fScore;
+        private Point cameFrom;
+
+        public AElement(Point point, int gScore, int hScore, Point cameFrom){
+            this.point = point;
+            int fScore = gScore + hScore;
+            this.gScore = gScore;
+            this.hScore = hScore;
+            this.cameFrom = cameFrom;
+        }
+
+        public int getfScore(){
+            return this.fScore;
+        }
+
+        public int getgScore(){
+            return this.gScore;
+        }
+
+        public int gethScore(){
+            return this.hScore;
+        }
+
+        public Point getPoint(){
+            return this.point;
+        }
+    }
+*/
+
+    public int heuristicCostEstimate(Point start, Point goal){
+        int x = Math.abs(start.getX() - goal.getX());
+        int y = Math.abs(start.getY() - goal.getY());
+        return x+y;
+    }
+
+    public List<Point> reconstructPath(HashMap<Point, Point> cameFrom, Point current){
+        //System.out.println("reconstructPath");
+        List<Point> totalPath = new ArrayList<>();
+        totalPath.add(current);
+        while(cameFrom.containsKey(current)){
+            current = cameFrom.get(current);
+            totalPath.add(current);
+        }
+        return totalPath;
+    }
+
+    public AReturn ANextPosition(Point entityPt, Point destPt){
+
+        //List<AElement> closedSet = new ArrayList<>();
+        //List<AElement> openSet = new ArrayList<>();
+
+        List<Point> path;
+
+        HashSet<Point> searched = new HashSet<>();
+
+        HashSet<Point> closedSet = new HashSet<>();
+        HashSet<Point> openSet = new HashSet<>();
+
+        HashMap<Point, Integer> gscore = new HashMap<>();
+        HashMap<Point, Integer> fscore = new HashMap<>();
+        HashMap<Point, Point> cameFrom = new HashMap<>();
+
+        openSet.add(entityPt);
+        searched.add(entityPt);
+        gscore.put(entityPt, 0);
+        fscore.put(entityPt, gscore.get(entityPt) + heuristicCostEstimate(entityPt, destPt));
+
+        //Point current = entityPt;
+
+        while (!openSet.isEmpty()){
+
+            //System.out.println("hi");
+            int temp = 1000000000;
+            Point current = null;
+
+            for(Point p : openSet){
+                //System.out.println(p.getX());
+                //System.out.println(p.getY());
+                if(fscore.get(p)< temp){
+                    //System.out.println("hit");
+                    current = p;
+                    temp = fscore.get(p);
+                }
+            }
+
+            //System.out.println("x: " + current.getX());
+            //System.out.println("y: " + current.getY());
+
+            if(current.equals(destPt)){
+                //System.out.println("found destination");
+                path = reconstructPath(cameFrom, destPt);
+                int length = path.size();
+                Point returnPoint;
+                if(length>2) {
+                    returnPoint = path.get(length - 2);
+                }
+                else{
+                    //System.out.println("hit");
+                    //return path.get(length - 1);
+                    returnPoint = destPt;
+                }
+
+                return new AReturn(returnPoint, path, searched);
+            }
+
+            openSet.remove(current);
+            closedSet.add(current);
+
+            List<Point> neighbors = openPoints(current, destPt);
+            for(Point p : neighbors){
+                if(closedSet.contains(p)){
+                    continue;
+                }
+                int tentativeGScore = gscore.get(current) + 1;
+
+                if(! openSet.contains(p) || tentativeGScore < gscore.get(p)){
+                    cameFrom.put(p, current);
+                    gscore.put(p,tentativeGScore);
+                    fscore.put(p,gscore.get(p) + heuristicCostEstimate(p,destPt));
+
+                    if(! openSet.contains(p)){
+                        openSet.add(p);
+                        searched.add(p);
+                    }
+                }
+            }
+        }
+        return new AReturn(entityPt, null, null);
+/*
+        int gScore = 0;
+        int hScore = heuristicCostEstimate(entityPt, destPt);
+        openSet.add(new AElement(entityPt, gScore, hScore, null));
+
+        while(openSet.size() > 0){
+            AElement current = openSet.get(0);
+            for(AElement p : openSet){
+                if(current.getfScore() < p.getfScore()){
+                    current = p;
+                }
+            }
+
+            if(current.getPoint().equals(destPt)){
+                //you reached the goal, do stuff
+            }
+
+            openSet.remove(current);
+            closedSet.add(current);
+
+            List<Point> neighbors = openPoints(current.getPoint());
+            for(Point p :neighbors){
+                Boolean inClosed = isInSet(closedSet,p);
+                Boolean inOpen = isInSet(openSet,p);
+                int tentativegScore;
+                if(!inClosed){
+                    tentativegScore = current.getgScore() + 1;
+                    }
+                if(!inOpen || found better path){
+
+                }
+            }
+
+        }
+*/
+    }
+/*
+    public Boolean isInSet(List<AElement> set, Point p){
+        Boolean in = false;
+        for(AElement e : set){
+            if(e.getPoint().equals(p)){
+                in = true;
+            }
+        }
+        return in;
+    }
+    */
+
+    public List<Point> openPoints(Point start, Point goal){
+        List<Point> temp = new ArrayList<>();
+        List<Point> open = new ArrayList<>();
+        int x = start.getX();
+        int y = start.getY();
+        temp.add(new Point(x-1,y));
+        temp.add(new Point(x+1,y));
+        temp.add(new Point(x, y-1));
+        temp.add(new Point(x, y+1));
+        for(Point p : temp){
+            if(this.withinBounds(p) && !this.isOccupied(p) || p.equals(goal)){
+                open.add(p);
+            }
+        }
+        return open;
     }
 
     public Point nextPosition(Point entityPt, Point destPt){

@@ -1,10 +1,7 @@
 package src.java.Project.entities;
 
-import src.java.Project.Actions;
-import src.java.Project.Point;
+import src.java.Project.*;
 import processing.core.PImage;
-import src.java.Project.Types;
-import src.java.Project.WorldModel;
 
 import java.util.List;
 
@@ -34,7 +31,10 @@ public class MinerNotFull
             return true;
         }
         else{
-            Point newPt = world.nextPosition(minerPt,orePt);
+            AReturn A = world.ANextPosition(minerPt, orePt);
+            Point newPt = A.getNextPoint();
+            this.setPath(A.getPath());
+            this.setSearched(A.getSearched());
             world.moveEntity(this, newPt);
             return false;
         }
