@@ -1,22 +1,30 @@
 package src.java.Project.entities;
 
-import src.java.Project.Actions;
-import src.java.Project.Point;
+import src.java.Project.*;
 import processing.core.PImage;
-import src.java.Project.Types;
-import src.java.Project.WorldModel;
 
+import java.util.HashSet;
 import java.util.List;
 
 public class OreBlob
 extends AnimationRate{
     private int rate;
+    private List<Point> path;
+    private HashSet<Point> searched;
     public OreBlob(String name, List<PImage> imgs, Point position, int rate, int animationRate){
         super(name, imgs, position, animationRate);
         this.rate = rate;
     }
     public int getRate(){
         return this.rate;
+    }
+
+    public List<Point> getPath() {
+        return path;
+    }
+
+    public HashSet<Point> getSearched() {
+        return searched;
     }
 
     public boolean blobToVein(Vein vein){
@@ -30,7 +38,12 @@ extends AnimationRate{
             return true;
         }
         else{
-            Point newPt = this.blobNextPosition(veinPt);
+            //Point newPt = this.blobNextPosition(veinPt);
+
+            AReturn A = world.ANextPosition(getPosition(), veinPt);
+            Point newPt = A.getNextPoint();
+            path = A.getPath();
+            searched = A.getSearched();
             Entity oldEntity = world.getTileOccupant(newPt);
             if(oldEntity instanceof Ore){
                 ((Ore) oldEntity).removeEntity();
@@ -88,5 +101,9 @@ extends AnimationRate{
             }
         }
         return newPt;
+    }
+
+    public Types getType(){
+        return Types.BLOB;
     }
 }

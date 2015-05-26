@@ -168,39 +168,6 @@ public class WorldModel{
         return this.entities;
     }
 
-    /*private static class AElement{
-        private Point point;
-        private int gScore;
-        private int hScore;
-        private int fScore;
-        private Point cameFrom;
-
-        public AElement(Point point, int gScore, int hScore, Point cameFrom){
-            this.point = point;
-            int fScore = gScore + hScore;
-            this.gScore = gScore;
-            this.hScore = hScore;
-            this.cameFrom = cameFrom;
-        }
-
-        public int getfScore(){
-            return this.fScore;
-        }
-
-        public int getgScore(){
-            return this.gScore;
-        }
-
-        public int gethScore(){
-            return this.hScore;
-        }
-
-        public Point getPoint(){
-            return this.point;
-        }
-    }
-*/
-
     public int heuristicCostEstimate(Point start, Point goal){
         int x = Math.abs(start.getX() - goal.getX());
         int y = Math.abs(start.getY() - goal.getY());
@@ -215,13 +182,11 @@ public class WorldModel{
             current = cameFrom.get(current);
             totalPath.add(current);
         }
+        totalPath.remove(current);
         return totalPath;
     }
 
     public AReturn ANextPosition(Point entityPt, Point destPt){
-
-        //List<AElement> closedSet = new ArrayList<>();
-        //List<AElement> openSet = new ArrayList<>();
 
         List<Point> path;
 
@@ -239,38 +204,27 @@ public class WorldModel{
         gscore.put(entityPt, 0);
         fscore.put(entityPt, gscore.get(entityPt) + heuristicCostEstimate(entityPt, destPt));
 
-        //Point current = entityPt;
-
         while (!openSet.isEmpty()){
 
-            //System.out.println("hi");
             int temp = 1000000000;
             Point current = null;
 
             for(Point p : openSet){
-                //System.out.println(p.getX());
-                //System.out.println(p.getY());
                 if(fscore.get(p)< temp){
-                    //System.out.println("hit");
                     current = p;
                     temp = fscore.get(p);
                 }
             }
-
-            //System.out.println("x: " + current.getX());
-            //System.out.println("y: " + current.getY());
 
             if(current.equals(destPt)){
                 //System.out.println("found destination");
                 path = reconstructPath(cameFrom, destPt);
                 int length = path.size();
                 Point returnPoint;
-                if(length>2) {
-                    returnPoint = path.get(length - 2);
+                if(length>1) {
+                    returnPoint = path.get(length - 1);
                 }
                 else{
-                    //System.out.println("hit");
-                    //return path.get(length - 1);
                     returnPoint = destPt;
                 }
 
@@ -300,53 +254,8 @@ public class WorldModel{
             }
         }
         return new AReturn(entityPt, null, null);
-/*
-        int gScore = 0;
-        int hScore = heuristicCostEstimate(entityPt, destPt);
-        openSet.add(new AElement(entityPt, gScore, hScore, null));
 
-        while(openSet.size() > 0){
-            AElement current = openSet.get(0);
-            for(AElement p : openSet){
-                if(current.getfScore() < p.getfScore()){
-                    current = p;
-                }
-            }
-
-            if(current.getPoint().equals(destPt)){
-                //you reached the goal, do stuff
-            }
-
-            openSet.remove(current);
-            closedSet.add(current);
-
-            List<Point> neighbors = openPoints(current.getPoint());
-            for(Point p :neighbors){
-                Boolean inClosed = isInSet(closedSet,p);
-                Boolean inOpen = isInSet(openSet,p);
-                int tentativegScore;
-                if(!inClosed){
-                    tentativegScore = current.getgScore() + 1;
-                    }
-                if(!inOpen || found better path){
-
-                }
-            }
-
-        }
-*/
     }
-/*
-    public Boolean isInSet(List<AElement> set, Point p){
-        Boolean in = false;
-        for(AElement e : set){
-            if(e.getPoint().equals(p)){
-                in = true;
-            }
-        }
-        return in;
-    }
-    */
 
     public List<Point> openPoints(Point start, Point goal){
         List<Point> temp = new ArrayList<>();
@@ -363,21 +272,6 @@ public class WorldModel{
             }
         }
         return open;
-    }
-
-    public Point nextPosition(Point entityPt, Point destPt){
-        int horiz = sign(destPt.getX() - entityPt.getX());
-        Point newPt = new Point(entityPt.getX() + horiz, entityPt.getY());
-
-        if(horiz == 0 || this.isOccupied(newPt)){
-            int vert = sign(destPt.getY() - entityPt.getY());
-            newPt = new Point(entityPt.getX(), entityPt.getY() + vert);
-
-            if(vert ==0 || this.isOccupied(newPt)){
-                newPt = new Point(entityPt.getX(), entityPt.getY());
-            }
-        }
-        return newPt;
     }
 
     public Point findOpenAround(Point pt, int distance){
