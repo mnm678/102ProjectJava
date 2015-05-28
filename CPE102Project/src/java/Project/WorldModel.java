@@ -175,7 +175,6 @@ public class WorldModel{
     }
 
     public List<Point> reconstructPath(HashMap<Point, Point> cameFrom, Point current){
-        //System.out.println("reconstructPath");
         List<Point> totalPath = new ArrayList<>();
         totalPath.add(current);
         while(cameFrom.containsKey(current)){
@@ -217,7 +216,6 @@ public class WorldModel{
             }
 
             if(current.equals(destPt)){
-                //System.out.println("found destination");
                 path = reconstructPath(cameFrom, destPt);
                 int length = path.size();
                 Point returnPoint;

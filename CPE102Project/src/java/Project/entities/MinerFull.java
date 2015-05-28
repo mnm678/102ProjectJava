@@ -7,6 +7,8 @@ import src.java.Project.Types;
 import src.java.Project.WorldModel;
 
 import java.lang.invoke.WrongMethodTypeException;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class MinerFull
@@ -35,10 +37,16 @@ public class MinerFull
     public Boolean minerToSmith(Blacksmith smith){
         Point minerPt = this.getPosition();
         if(smith.equals(null)){
+            List<Point> current = new ArrayList<>();
+            current.add(minerPt);
+            HashSet<Point> curSearch = new HashSet<>();
+            curSearch.add(minerPt);
+            this.setPath(current);
+            this.setSearched(curSearch);
             return false;
         }
         Point smithPt = smith.getPosition();
-        if(world.adjacent(minerPt,smithPt)){
+        if(world.adjacent(minerPt, smithPt)){
             smith.setResourceCount(smith.getResourceCount() + this.getResourceCount());
             this.setResourceCount(0);
             return true;

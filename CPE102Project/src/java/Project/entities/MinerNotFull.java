@@ -3,6 +3,8 @@ package src.java.Project.entities;
 import src.java.Project.*;
 import processing.core.PImage;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class MinerNotFull
@@ -22,6 +24,12 @@ public class MinerNotFull
     public Boolean minerToOre(Ore ore){
         Point minerPt = this.getPosition();
         if(ore == null){
+            List<Point> current = new ArrayList<>();
+            current.add(minerPt);
+            HashSet<Point> curSearch = new HashSet<>();
+            curSearch.add(minerPt);
+            this.setPath(current);
+            this.setSearched(curSearch);
             return false;
         }
         Point orePt = ore.getPosition();

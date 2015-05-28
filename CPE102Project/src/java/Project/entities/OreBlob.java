@@ -3,6 +3,7 @@ package src.java.Project.entities;
 import src.java.Project.*;
 import processing.core.PImage;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -30,6 +31,10 @@ extends AnimationRate{
     public boolean blobToVein(Vein vein){
         Point blobPt = this.getPosition();
         if(vein == null){
+            path = new ArrayList<>();
+            path.add(blobPt);
+            searched = new HashSet<>();
+            searched.add(blobPt);
             return false;
         }
         Point veinPt = vein.getPosition();
@@ -38,8 +43,6 @@ extends AnimationRate{
             return true;
         }
         else{
-            //Point newPt = this.blobNextPosition(veinPt);
-
             AReturn A = world.ANextPosition(getPosition(), veinPt);
             Point newPt = A.getNextPoint();
             path = A.getPath();
@@ -84,23 +87,6 @@ extends AnimationRate{
         world.actionScheduleAction(this, createOreBlobAction(),
                 ticks + this.getRate());
         world.scheduleAnimation(this,0);
-    }
-
-    public Point blobNextPosition(Point destPt){
-        int horiz = world.sign(destPt.getX() - this.getPosition().getX());
-        Point newPt = new Point(this.getPosition().getX() + horiz, this.getPosition().getY());
-
-        if(horiz == 0 ||
-                (world.isOccupied(newPt) && !(world.getTileOccupant(newPt) instanceof Ore))){
-            int vert = world.sign(destPt.getY() - this.getPosition().getY());
-            newPt = new Point(this.getPosition().getX(), this.getPosition().getY() + vert);
-
-            if(vert == 0 ||
-                    (world.isOccupied(newPt) && !(world.getTileOccupant(newPt) instanceof Ore))){
-                newPt = this.getPosition();
-            }
-        }
-        return newPt;
     }
 
     public Types getType(){
