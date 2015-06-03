@@ -28,4 +28,8 @@ public abstract class Entity {
     public void nextImage(){
         this.currentImg = (currentImg +1) % imgs.size();
     }
+
+    public void setImages(List<PImage> images){
+        this.imgs = images;
+    }
 }

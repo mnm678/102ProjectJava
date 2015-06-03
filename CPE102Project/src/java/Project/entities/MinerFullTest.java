@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
  * Created by marinamoore on 4/30/15.
  */
 public class MinerFullTest {
-    MinerFull testMiner = new MinerFull("miner", null, 3, new Point(1,2), 4, 5);
+    MinerFull testMiner = new MinerFull("miner", null, null, 3, new Point(1,2), 4, 5);
 
     public MinerFullTest(){
     }

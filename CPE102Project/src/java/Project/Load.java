@@ -93,9 +93,9 @@ public class Load {
                     if(properties[propertyKey].equals(bgndKey)){
                         addBackground(properties);
                     }
-                    else{
-                        addEntity(properties,run, ticks);
-                    }
+                    else {
+                            addEntity(properties,run, ticks);
+                        }
                 }
             }
         }
@@ -144,7 +144,7 @@ public class Load {
     public static Miner createMiner(String[] properties){
         if(properties.length == minerNumProperties){
             Miner miner = new MinerNotFull(properties[minerName],
-                    getImages(properties[propertyKey]),
+                    getImages(properties[propertyKey]), getImages("ghost"),
                     Integer.parseInt(properties[minerLimit]),
                     new Point(Integer.parseInt(properties[minerCol]), Integer.parseInt(properties[minerRow])),
                     Integer.parseInt(properties[minerRate]),
@@ -249,7 +249,7 @@ public class Load {
         if(attrs.length >=2){
             String key = attrs[0];
             PImage img = controller.loadImage(attrs[1]);
-            if(key.equals("miner")){
+            if(key.equals("miner") || key.equals("ghost")){
                 img = controller.setAlpha(img, controller.color(252, 252, 252), 0);
             }
             if(key.equals("blob") || key.equals("quake")){
@@ -274,4 +274,5 @@ public class Load {
         }
         return temp;
     }
+
 }

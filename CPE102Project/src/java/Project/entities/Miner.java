@@ -1,5 +1,6 @@
 package src.java.Project.entities;
 
+import processing.core.PConstants;
 import src.java.Project.Actions;
 import src.java.Project.Point;
 import processing.core.PImage;
@@ -14,10 +15,18 @@ public abstract class Miner
     private int animationRate;
     private List<Point> path;
     private HashSet<Point> searched;
-    public Miner(String name, List<PImage> imgs, int resourceLimit, Point position, int rate, int animationRate){
+    protected List<PImage> originalImages;
+    protected List<PImage> grayImages;
+    public Miner(String name, List<PImage> imgs, List<PImage> grayImages, int resourceLimit, Point position, int rate, int animationRate){
         super(name, imgs, position, rate);
         this.resourceLimit = resourceLimit;
         this.animationRate = animationRate;
+        this.originalImages = imgs;
+        this.grayImages = grayImages;
+    }
+
+    public List<PImage> getGrayImages() {
+        return grayImages;
     }
 
     public HashSet<Point> getSearched() {

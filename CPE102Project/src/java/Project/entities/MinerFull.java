@@ -14,8 +14,8 @@ import java.util.List;
 public class MinerFull
         extends Miner{
     private int resourceCount;
-    public MinerFull(String name, List<PImage> imgs, int resourceLimit, Point position, int rate, int animationRate){
-        super(name, imgs, resourceLimit, position, rate, animationRate);
+    public MinerFull(String name, List<PImage> imgs, List<PImage> grayImage, int resourceLimit, Point position, int rate, int animationRate){
+        super(name, imgs, grayImage, resourceLimit, position, rate, animationRate);
         this.resourceCount = resourceLimit;
     }
     public int getResourceCount(){
@@ -57,12 +57,38 @@ public class MinerFull
             this.setPath(A.getPath());
             this.setSearched(A.getSearched());
             world.moveEntity(this, newPt);
+            if(world.iceContains(newPt) && !world.iceContains(minerPt)){
+                this.setImages(grayImages);
+            }
+            if(!world.iceContains(newPt) && world.iceContains(minerPt)){
+                this.setImages(originalImages);
+            }
+            /*boolean obstacle = world.checkIce(getPosition());
+            if(obstacle){
+                AReturn A2 = world.ANextPosition(minerPt, smithPt);
+                Point newPt2 = A.getNextPoint();
+                this.setPath(A2.getPath());
+                this.setSearched(A2.getSearched());
+                world.moveEntity(this, newPt2);
+            }*/
             return false;
         }
     }
 
+    public Miner transformIce(){
+        Miner newEntity = new MinerFull(this.getName(), this.getGrayImages(), this.getGrayImages(),
+                this.getResourceLimit(), this.getPosition(), this.getRate(), this.getAnimationRate());
+        return newEntity;
+    }
+
+    public Miner transformBack(){
+        Miner newEntity = new MinerFull(this.getName(), this.getImages(), this.getGrayImages(),
+                this.getResourceLimit(), this.getPosition(), this.getRate(), this.getAnimationRate());
+        return newEntity;
+    }
+
     public Miner tryTransformMinerFull(){
-        Miner newEntity = new MinerNotFull(this.getName(), this.getImages(),
+        Miner newEntity = new MinerNotFull(this.getName(), this.getImages(), this.getGrayImages(),
                 this.getResourceLimit(),
                 this.getPosition(), this.getRate(),
                 this.getAnimationRate());

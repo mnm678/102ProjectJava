@@ -1,12 +1,10 @@
 package src.java.Project;
 
 import processing.core.*;
-import src.java.Project.entities.Background;
-import src.java.Project.entities.Entity;
-import src.java.Project.entities.Miner;
-import src.java.Project.entities.OreBlob;
+import src.java.Project.entities.*;
 
-import java.sql.Blob;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by marinamoore on 5/10/15.
@@ -29,8 +27,6 @@ public class Controller extends PApplet{
 
     private static final int COLOR_MASK = 0xffffff;
 
-    private PImage test;
-
     private int numCols = (screenWidth / tileWidth) * worldWidthScale;
     private int numRows = (screenHeight / tileHeight) * worldHeightScale;
 
@@ -41,6 +37,8 @@ public class Controller extends PApplet{
 
     private PImage pathImage;
     private PImage searchImage;
+    private PImage ice;
+    private PImage ice2;
 
 
     public Controller() {
@@ -50,8 +48,14 @@ public class Controller extends PApplet{
     public void setup(){
         size(screenWidth, screenHeight);
 
+        ice = loadImage("ice.png");
+        ice2 = loadImage("ice2.png");
+        List<PImage> iceList = new ArrayList<>();
+        iceList.add(ice);
+        iceList.add(ice2);
+
         Background defaultBackground = new Background(defaultImageName, load.getImages(defaultImageName));
-        world.init(numRows, numCols, defaultBackground);
+        world.init(numRows, numCols, defaultBackground, iceList);
 
         nextTime = System.currentTimeMillis() + animationTime;
 
@@ -63,7 +67,6 @@ public class Controller extends PApplet{
         Load.loadWorld(worldFile, true, System.currentTimeMillis());
         view.init(screenWidth / tileWidth, screenHeight / tileHeight, tileWidth, tileHeight, this);
         view.drawViewport();
-        test = setAlpha(loadImage("miner1.bmp"), color(255, 255, 255), 0);
     }
 
 
@@ -85,6 +88,11 @@ public class Controller extends PApplet{
                 break;
         }
         view.updateView(deltaX, deltaY);
+    }
+
+    public void mousePressed(){
+        Point mouseLoc = view.getViewport().toWorld(new Point(mouseX / 32, mouseY / 32));
+        world.worldEvent(mouseLoc, System.currentTimeMillis());
     }
 
     public void handleTimerEvent(){
@@ -115,6 +123,18 @@ public class Controller extends PApplet{
         }
         if(occupant != null && occupant.getType() == Types.BLOB){
             OreBlob blob = (OreBlob) occupant;
+            if(blob.getPath() != null) {
+                for (Point p : blob.getSearched()){
+                    drawPath(p, searchImage);
+                }
+                for (Point p : blob.getPath()) {
+                    drawPath(p, pathImage);
+                }
+            }
+        }
+
+        if(occupant != null && occupant.getType() == Types.TURTLE){
+            Turtle blob = (Turtle) occupant;
             if(blob.getPath() != null) {
                 for (Point p : blob.getSearched()){
                     drawPath(p, searchImage);

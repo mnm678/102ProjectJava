@@ -1,4 +1,5 @@
 package src.java.Project;
+import processing.core.PConstants;
 import processing.core.PImage;
 import src.java.Project.entities.*;
 
@@ -24,12 +25,18 @@ public class WorldModel{
     private final int blobAnimationMin = 1;
     private final int blobAnimationMax = 3;
 
+    private final int turtleAnimationRate = 100;
+    private final int turtleAnimationMin = 1;
+    private final int turtleAnimationMax = 3;
+
     private final int oreCorruptMin = 20000;
     private final int oreCorruptMax = 30000;
 
     public final int quakeSteps = 10;
     public final int quakeDuration = 1100;
     private final int quakeAnimationRate = 100;
+
+    public List<PImage> ice;
 
     public static WorldModel getInstance(){
         if(instance == null){
@@ -38,13 +45,14 @@ public class WorldModel{
         return instance;
     }
 
-    public void init(int numRows, int numCols, Entity bg){
+    public void init(int numRows, int numCols, Entity bg, List<PImage> ice){
         this.background = new Grid(numCols, numRows, bg);
         this.numRows = numRows;
         this.numCols = numCols;
         this.occupancy = new Grid(numCols, numRows, null);
         this.entities = new ArrayList<>();
         this.actionQueue = new OrderedList();
+        this.ice = ice;
     }
 
     public int getNumRows(){
@@ -226,6 +234,10 @@ public class WorldModel{
                     returnPoint = destPt;
                 }
 
+                if(checkIce(returnPoint)){
+                    returnPoint = entityPt;
+                }
+
                 return new AReturn(returnPoint, path, searched);
             }
 
@@ -237,7 +249,13 @@ public class WorldModel{
                 if(closedSet.contains(p)){
                     continue;
                 }
-                int tentativeGScore = gscore.get(current) + 1;
+
+                int cost = 1;
+                if(ice.contains(getBackgroundImage(p))){
+                    cost = 5;
+                }
+
+                int tentativeGScore = gscore.get(current) + cost;
 
                 if(! openSet.contains(p) || tentativeGScore < gscore.get(p)){
                     cameFrom.put(p, current);
@@ -262,8 +280,8 @@ public class WorldModel{
         int y = start.getY();
         temp.add(new Point(x-1,y));
         temp.add(new Point(x+1,y));
-        temp.add(new Point(x, y-1));
-        temp.add(new Point(x, y+1));
+        temp.add(new Point(x, y - 1));
+        temp.add(new Point(x, y + 1));
         for(Point p : temp){
             if(this.withinBounds(p) && !this.isOccupied(p) || p.equals(goal)){
                 open.add(p);
@@ -285,9 +303,18 @@ public class WorldModel{
         return null;
     }
 
+    public Turtle createTurtle(String name, Point pt, int rate, long ticks){
+        Turtle turtle = new Turtle(name, Load.map.get("turtle"),
+                pt, rate,
+                (turtleAnimationMin + (int)Math.random()* turtleAnimationMax) * turtleAnimationRate);
+        turtle.scheduleTurtle(ticks);
+        return turtle;
+    }
+
     public OreBlob createBlob(String name, Point pt, int rate, long ticks){
         OreBlob blob = new OreBlob(name, Load.map.get("blob"),
-                pt, rate, (blobAnimationMin + (int)Math.random()*blobAnimationMax) * blobAnimationRateScale);
+                pt, rate,
+                (blobAnimationMin + (int)Math.random()*blobAnimationMax) * blobAnimationRateScale);
         blob.scheduleBlob(ticks);
         return blob;
     }
@@ -376,5 +403,44 @@ public class WorldModel{
         else{
             return 0;
         }
+    }
+
+    public void worldEvent(Point origin, long ticks){
+        for(int i=-2; i<3; i++){
+            for(int j = -2; j < 3; j++){
+                Point temp = new Point(origin.getX() + i, origin.getY() + j);
+                setBackground(temp, new Background("newBackground", ice));
+            }
+        }
+        Point turtlePt = new Point(origin.getX()+2, origin.getY()+2);
+        if(withinBounds(turtlePt)) {
+            Turtle newTurtle = createTurtle("turtle", turtlePt, 800, ticks);
+            addEntity(newTurtle);
+        }
+    }
+
+    public boolean checkIce(Point position){
+        if(ice.contains(getBackgroundImage(position))){
+            Entity bg = background.getCell(position);
+            if(bg.getImage() == ice.get(1)){
+                Obstacle obstacle = new Obstacle("obstacle", Load.getImages("obstacle"), position);
+                addEntity(obstacle);
+                return true;
+
+            }
+            bg.nextImage();
+        }
+        return false;
+    }
+
+    public void turnBlue(Miner miner){
+        for(PImage i : miner.getImages()){
+            i.filter(PConstants.GRAY);
+        }
+        //miner.getImages().filter(PConstants.GRAY);
+    }
+
+    public boolean iceContains(Point pt){
+        return ice.contains(getBackgroundImage(pt));
     }
 }

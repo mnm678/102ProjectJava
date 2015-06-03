@@ -13,7 +13,7 @@ public class MinerNotFullTest {
     public MinerNotFullTest(){
     }
 
-    MinerNotFull testMiner = new MinerNotFull("miner", null, 2, new Point(1,2),3, 4);
+    MinerNotFull testMiner = new MinerNotFull("miner", null, null, 2, new Point(1,2),3, 4);
 
     @Test
     public void testGetResourceCount() throws Exception {
