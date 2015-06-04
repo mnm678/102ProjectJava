@@ -18,7 +18,7 @@ miner miner3.bmp
 miner miner4.bmp
 miner miner5.bmp
 obstacle obstacle.bmp
-ore ore.bmp
+ore ore.png
 quake quake1.bmp
 quake quake2.bmp
 quake quake3.bmp
@@ -28,3 +28,11 @@ quake quake6.bmp
 rocks rock.bmp
 vein vein.bmp
 background_default none.bmp
+ghost ghost1.png
+ghost ghost2.png
+ghost ghost3.png
+ghost ghost4.png
+ghost ghost5.png
+turtle tortoise1.png
+turtle tortoise2.png
+
