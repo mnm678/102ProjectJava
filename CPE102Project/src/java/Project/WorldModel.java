@@ -244,7 +244,7 @@ public class WorldModel{
             openSet.remove(current);
             closedSet.add(current);
 
-            List<Point> neighbors = openPoints(current, destPt);
+            List<Point> neighbors = openPoints(current, destPt, entityPt);
             for(Point p : neighbors){
                 if(closedSet.contains(p)){
                     continue;
@@ -252,7 +252,7 @@ public class WorldModel{
 
                 int cost = 1;
                 if(ice.contains(getBackgroundImage(p))){
-                    cost = 5;
+                    cost = 4;
                 }
 
                 int tentativeGScore = gscore.get(current) + cost;
@@ -273,7 +273,7 @@ public class WorldModel{
 
     }
 
-    public List<Point> openPoints(Point start, Point goal){
+    public List<Point> openPoints(Point start, Point goal, Point entityPt){
         List<Point> temp = new ArrayList<>();
         List<Point> open = new ArrayList<>();
         int x = start.getX();
@@ -286,6 +286,10 @@ public class WorldModel{
             if(this.withinBounds(p) && !this.isOccupied(p) || p.equals(goal)){
                 open.add(p);
             }
+            /*if(this.withinBounds(p) && this.getTileOccupant(entityPt).getType() == Types.TURTLE &&
+                    this.isOccupied(p) && this.getTileOccupant(p).getType() == Types.OBSTACLE){
+                open.add(p);
+            }*/
         }
         return open;
     }
@@ -413,7 +417,7 @@ public class WorldModel{
             }
         }
         Point turtlePt = new Point(origin.getX()+2, origin.getY()+2);
-        if(withinBounds(turtlePt)) {
+        if(withinBounds(turtlePt) && !isOccupied(turtlePt)) {
             Turtle newTurtle = createTurtle("turtle", turtlePt, 800, ticks);
             addEntity(newTurtle);
         }

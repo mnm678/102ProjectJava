@@ -1,6 +1,5 @@
 package src.java.Project.entities;
 
-import processing.core.PConstants;
 import src.java.Project.Actions;
 import src.java.Project.Point;
 import processing.core.PImage;
@@ -23,6 +22,10 @@ public abstract class Miner
         this.animationRate = animationRate;
         this.originalImages = imgs;
         this.grayImages = grayImages;
+    }
+
+    public List<PImage> getOriginalImages() {
+        return originalImages;
     }
 
     public List<PImage> getGrayImages() {

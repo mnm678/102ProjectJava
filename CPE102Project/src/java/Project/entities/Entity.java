@@ -3,6 +3,7 @@ package src.java.Project.entities;
 import src.java.Project.Types;
 import processing.core.PImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Entity {
@@ -30,6 +31,6 @@ public abstract class Entity {
     }
 
     public void setImages(List<PImage> images){
-        this.imgs = images;
+        this.imgs = new ArrayList<>(images);
     }
 }

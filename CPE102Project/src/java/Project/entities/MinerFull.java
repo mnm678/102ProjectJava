@@ -57,10 +57,10 @@ public class MinerFull
             this.setPath(A.getPath());
             this.setSearched(A.getSearched());
             world.moveEntity(this, newPt);
-            if(world.iceContains(newPt) && !world.iceContains(minerPt)){
+            if(world.iceContains(newPt)){
                 this.setImages(grayImages);
             }
-            if(!world.iceContains(newPt) && world.iceContains(minerPt)){
+            if(!world.iceContains(newPt)){
                 this.setImages(originalImages);
             }
             /*boolean obstacle = world.checkIce(getPosition());
@@ -75,23 +75,14 @@ public class MinerFull
         }
     }
 
-    public Miner transformIce(){
-        Miner newEntity = new MinerFull(this.getName(), this.getGrayImages(), this.getGrayImages(),
-                this.getResourceLimit(), this.getPosition(), this.getRate(), this.getAnimationRate());
-        return newEntity;
-    }
-
-    public Miner transformBack(){
-        Miner newEntity = new MinerFull(this.getName(), this.getImages(), this.getGrayImages(),
-                this.getResourceLimit(), this.getPosition(), this.getRate(), this.getAnimationRate());
-        return newEntity;
-    }
-
     public Miner tryTransformMinerFull(){
-        Miner newEntity = new MinerNotFull(this.getName(), this.getImages(), this.getGrayImages(),
+        Miner newEntity = new MinerNotFull(this.getName(), this.getOriginalImages(), this.getGrayImages(),
                 this.getResourceLimit(),
                 this.getPosition(), this.getRate(),
                 this.getAnimationRate());
+        if(world.iceContains(this.getPosition())){
+            newEntity.setImages(grayImages);
+        }
         return newEntity;
 
     }

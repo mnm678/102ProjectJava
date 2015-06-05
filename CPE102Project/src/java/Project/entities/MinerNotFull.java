@@ -67,10 +67,13 @@ public class MinerNotFull
             return this;
         }
         else{
-            Miner newEntity = new MinerFull(this.getName(), this.getImages(), this.getGrayImages(),
+            Miner newEntity = new MinerFull(this.getName(), this.getOriginalImages(), this.getGrayImages(),
                     this.getResourceLimit(),
                     this.getPosition(), this.getRate(),
                     this.getAnimationRate());
+            if(world.iceContains(this.getPosition())){
+                newEntity.setImages(grayImages);
+            }
             return newEntity;
         }
     }
