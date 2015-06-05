@@ -1,1 +1,2 @@
+World event: 
 To trigger the event, click on any tile and it will create a lake centered on where you click. A turtle will also spawn in the bottom right corner of the lake. All moving entities try to avoid the lake (by increasing the cost in A*), and when a lake tile is walked across twice it melts and turns into an obstacle. When a miner crosses the lake it turns blue and it turns back after it gets back to land. The turtles chase and kill ore blobs.
